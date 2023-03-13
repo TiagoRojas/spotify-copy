@@ -19,7 +19,8 @@ export default function PlayPreview({music, img, name, i, id, token}) {
 	const [checkId, setCheckId] = useState();
 	const {start, stop} = useMusic();
 	const {refetch, data} = useCheckTrackExistQuery({id: checkId, token}, {manual: true});
-
+	const test = useSelector((state) => state.spotifyData.trackFavList);
+	const currentId = useSelector((state) => state.spotifyData.currentId);
 	// This function start from 0 the track and adds to "currentPlaying" variable so the ternary operator from "return" change what's returning
 	const startPlay = ({index}) => {
 		let audio = document.querySelector(`.audio${index}`);
@@ -39,6 +40,7 @@ export default function PlayPreview({music, img, name, i, id, token}) {
 
 	// This useEffect is executing every time the variable data changes replaces the "heart button" src if user has the track added to favorites
 	useEffect(() => {
+		refetch(currentId);
 		let image = document.querySelector(".heart" + i);
 		if (data === undefined) {
 			return;
@@ -48,11 +50,10 @@ export default function PlayPreview({music, img, name, i, id, token}) {
 		} else {
 			image.src = heart;
 		}
-	}, [data]);
+	}, [data, test]);
 
 	// This function is checking on image load if user has the track added to favorites on Spotify
 	const checkFavorite = () => {
-		let image = document.querySelector(".heart" + i);
 		setCheckId(id);
 		refetch(id);
 	};
@@ -73,14 +74,7 @@ export default function PlayPreview({music, img, name, i, id, token}) {
 	return (
 		<div className={"flex flex-row items-center divtest" + i} onClick={() => startPlay({index: i})} key={"playPreview" + i}>
 			<audio src={music} className={`audio${i}`} onEnded={() => handleReset({index: i})} />
-			<img
-				src={img}
-				alt={name}
-				className="imagePlayer"
-				onLoad={(e) => {
-					checkFavorite();
-				}}
-			/>
+			<img src={img} alt={name} className="imagePlayer" onLoad={() => checkFavorite()} />
 			{playing && currentPlaying === currentAudio ? (
 				<ProgressProvider valueStart={0} valueEnd={valueTime}>
 					{(value) => <CircularProgressbar value={value} maxValue={29.779592} className="musicRadial" />}

@@ -6,14 +6,14 @@ const initialState = {
 		artists: [],
 		playlists: []
 	},
+	trackFavList: [],
 	loaded: false,
 	isBlank: true,
 	timestamp: 0,
 	currentAudio: "",
 	isPlaying: false,
 	offset: 0,
-	currentId: "",
-	musicFav: []
+	currentId: ""
 };
 export const spotifySlice = createSlice({
 	name: "SpotifyData",
@@ -41,10 +41,10 @@ export const spotifySlice = createSlice({
 		changeId: (state, action) => {
 			state.currentId = action.payload;
 		},
-		updateMusicFav: (state, action) => {
-			state.musicFav = [{id: action.payload.id, fav: action.payload.data[0]}];
+		updateTrackFavList: (state, action) => {
+			state.trackFavList = action.payload;
 		}
 	}
 });
 
-export const {addData, isBlank, timestamp, isPlaying, changeOffset, changeId, updateMusicFav} = spotifySlice.actions;
+export const {addData, isBlank, timestamp, isPlaying, changeOffset, changeId, updateTrackFavList} = spotifySlice.actions;

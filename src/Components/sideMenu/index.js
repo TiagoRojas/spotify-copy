@@ -1,5 +1,7 @@
 import Logo from "../../assets/logo.png";
 import {useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+
 function SideMenu() {
 	const navigate = useNavigate();
 	const navigateLikedSongs = () => {

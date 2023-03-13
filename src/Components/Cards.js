@@ -1,28 +1,36 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, {useState} from "react";
 import {millisToMinutesAndSeconds} from "./complements";
 import PlayPreview from "./playPreview";
-import LeftArrow from "../assets/leftArrow.png";
-import RightArrow from "../assets/rightArrow.png";
-import {changeId, changeOffset} from "../store/slice/spotifySlice";
 import heart from "../assets/heart.png";
 import heartFilled from "../assets/heartFilled.png";
 import {useAddTrackFavoriteQuery, useRemoveTrackFavoriteQuery} from "../store/api/spotifyApi";
+import {useDispatch, useSelector} from "react-redux";
+import {changeOffset} from "../store/slice/spotifySlice";
+import LeftArrow from "../assets/leftArrow.png";
+import RightArrow from "../assets/rightArrow.png";
 
-export default function CardsTracks({token}) {
-	const dispatch = useDispatch();
-	const spotifyData = useSelector((state) => state.spotifyData.data) || [];
-	const blank = useSelector((state) => state.spotifyData.isBlank);
-	const offset = useSelector((state) => state.spotifyData.offset);
-	const [tracks, setTracks] = useState([]);
+export default function CardsTracks({token, data, type = ""}) {
 	const [id, setId] = useState("");
 	const {refetch: refetchRemove} = useRemoveTrackFavoriteQuery({id, token}, {manual: true});
 	const {refetch: refetchAdd} = useAddTrackFavoriteQuery({id, token}, {manual: true});
-	useEffect(() => {
-		if (!blank) {
-			setTracks(spotifyData.tracks);
+	const dispatch = useDispatch();
+	const addRemoveFav = ({id, i}) => {
+		let image = document.querySelector(".heart" + i);
+		setId(id);
+		if (image.src === heartFilled) {
+			image.src = heart;
+			setTimeout(() => {
+				refetchRemove();
+			}, 500);
+		} else {
+			image.src = heartFilled;
+			setTimeout(() => {
+				refetchAdd();
+			}, 500);
 		}
-	}, [spotifyData]);
+	};
+
+	const offset = useSelector((state) => state.spotifyData.offset);
 	const offsetSubtract = () => {
 		if (offset >= 10) {
 			dispatch(changeOffset(-10));
@@ -32,32 +40,16 @@ export default function CardsTracks({token}) {
 		dispatch(changeOffset(10));
 	};
 
-	const addRemoveFav = ({id, i}) => {
-		let image = document.querySelector(".heart" + i);
-		setId(id);
-		if (image.src === heartFilled) {
-			refetchRemove();
-			image.src = heart;
-		} else {
-			image.src = heartFilled;
-			refetchAdd();
-		}
-	};
-
-	return blank ? (
-		<div className="flex justify-center items-center w-screen my-auto" key={"container"}>
-			<p className="text-white my-52 text-xl font-bold">Busca una cancion</p>
-		</div>
-	) : (
-		<>
-			{tracks.map((item, i) => {
+	return data === undefined ? null : (
+		<div>
+			{data.map((item, i) => {
 				return (
 					<div key={"card" + i} className="grid grid-cols-6 auto-rows-auto items-center w-full p-3 rounded text-lg hover:text-xl hover:bg-zinc-700">
 						<p className="text-white text-sm">{i + 1}</p>
 						<div>
 							<img src={heart} alt="heart" className={"w-6 h-auto heart" + i} onClick={() => addRemoveFav({id: item.id, i})} />
 						</div>
-						<PlayPreview music={item.preview_url} img={item.album.images[1].url} name={item.name} i={i} key={"audio" + i} id={item.id} token={token} />
+						<PlayPreview music={item.preview_url} img={item.album?.images[1].url} name={item.name} i={i} key={"audio" + i} id={item.id} token={token} />
 						<div>
 							<p className="text-white mx-auto">{item.name}</p>
 							<div className="flex flex-row text-gray-500 text-sm">
@@ -80,11 +72,13 @@ export default function CardsTracks({token}) {
 					</div>
 				);
 			})}
-			<div className="flex mt-5">
-				<img src={LeftArrow} onClick={() => offsetSubtract()} className="invert w-5 h-auto" />
-				<p className="text-white">{offset / 10}</p>
-				<img src={RightArrow} onClick={() => offsetAdd()} className="invert w-5 h-auto" />
-			</div>
-		</>
+			{type === "search" ? (
+				<div className="flex mt-5 w-max mx-auto">
+					<img src={LeftArrow} onClick={() => offsetSubtract()} className="invert w-5 h-auto" />
+					<p className="text-white">{offset / 10}</p>
+					<img src={RightArrow} onClick={() => offsetAdd()} className="invert w-5 h-auto" />
+				</div>
+			) : null}
+		</div>
 	);
 }

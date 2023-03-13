@@ -2,7 +2,7 @@ const scopes = "user-read-email user-read-private user-library-read user-library
 const AUTH_URL =
 	"https://accounts.spotify.com/authorize?client_id=c5154a2e992646679ab9f91fb823cde1&response_type=code&scope=" +
 	encodeURIComponent(scopes) +
-	"&redirect_uri=http://localhost:3000";
+	"&redirect_uri=http://localhost:3000/";
 
 export default function Login() {
 	return (
