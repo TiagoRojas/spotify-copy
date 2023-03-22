@@ -7,11 +7,13 @@ import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
 import {useDispatch, useSelector} from "react-redux";
 import {changeCode} from "../store/slice/dataSlice";
+import {useNavigate} from "react-router-dom";
 
 function App() {
 	const dispatch = useDispatch();
 	const accessToken = useSelector((state) => state.data.code);
 	const code = new URLSearchParams(window.location.search).get("code");
+	const navigate = useNavigate();
 	const commonParams = {
 		redirect_uri: process.env.REACT_APP_SPOTIFY_CALLBACK_HOST,
 		client_id: process.env.REACT_APP_CLIENT_ID,
@@ -22,9 +24,7 @@ function App() {
 		grant_type: "authorization_code",
 		...commonParams
 	};
-
 	const tracks = useSelector((state) => state.spotifyData.data.tracks);
-
 	const searchParams = Object.keys(params)
 		.map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(params[key]))
 		.join("&");
@@ -38,6 +38,7 @@ function App() {
 				.then((res) => res.json())
 				.then((data) => {
 					dispatch(changeCode(data.access_token));
+					navigate("/");
 				});
 		}
 	}, [code]);

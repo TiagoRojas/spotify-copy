@@ -1,3 +1,6 @@
 #seeker {
 	height: 10px;
 }
+input[type="range"] {
+	accent-color: #1ed760;
+}

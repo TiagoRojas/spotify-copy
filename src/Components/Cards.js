@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {millisToMinutesAndSeconds} from "./complements";
 import PlayPreview from "./playPreview";
 import heart from "../assets/heart.png";
@@ -14,6 +14,8 @@ export default function CardsTracks({token, data, type = ""}) {
 	const {refetch: refetchRemove} = useRemoveTrackFavoriteQuery({id, token}, {manual: true});
 	const {refetch: refetchAdd} = useAddTrackFavoriteQuery({id, token}, {manual: true});
 	const dispatch = useDispatch();
+	const blank = useSelector((state) => state.spotifyData.isBlank);
+	let checkIdList = [];
 	const addRemoveFav = ({id, i}) => {
 		let image = document.querySelector(".heart" + i);
 		setId(id);
@@ -29,7 +31,7 @@ export default function CardsTracks({token, data, type = ""}) {
 			}, 500);
 		}
 	};
-
+	useEffect(() => console.log(blank), [blank]);
 	const offset = useSelector((state) => state.spotifyData.offset);
 	const offsetSubtract = () => {
 		if (offset >= 10) {
@@ -39,46 +41,57 @@ export default function CardsTracks({token, data, type = ""}) {
 	const offsetAdd = () => {
 		dispatch(changeOffset(10));
 	};
-
-	return data === undefined ? null : (
-		<div>
-			{data.map((item, i) => {
-				return (
-					<div key={"card" + i} className="grid grid-cols-6 auto-rows-auto items-center w-full p-3 rounded text-lg hover:text-xl hover:bg-zinc-700">
-						<p className="text-white text-sm">{i + 1}</p>
-						<div>
-							<img src={heart} alt="heart" className={"w-6 h-auto heart" + i} onClick={() => addRemoveFav({id: item.id, i})} />
-						</div>
-						<PlayPreview music={item.preview_url} img={item.album?.images[1].url} name={item.name} i={i} key={"audio" + i} id={item.id} token={token} />
-						<div>
-							<p className="text-white mx-auto">{item.name}</p>
-							<div className="flex flex-row text-gray-500 text-sm">
-								{item.artists.length > 1 ? (
-									item.artists.map((artist, index) => {
-										return (
-											<p>
-												{artist.name}
-												{index < 1 ? <i className="pr-1">,</i> : ""}
-											</p>
-										);
-									})
-								) : (
-									<p>{item.artists[0].name}</p>
-								)}
+	if (data !== undefined) {
+		return (
+			<>
+				{data.map((item, i) => {
+					checkIdList = [...checkIdList, item.id];
+					return (
+						<div key={"card" + i} className="grid grid-cols-6 auto-rows-auto items-center w-full p-3 rounded text-lg hover:text-xl hover:bg-zinc-700">
+							<p className="text-white text-sm">{i + 1}</p>
+							<div>
+								<img src={heart} alt="heart" className={"w-6 h-auto heart" + i} onClick={() => addRemoveFav({id: item.id, i})} />
 							</div>
+							<PlayPreview
+								music={item.preview_url}
+								img={item.album?.images[1].url}
+								musicName={item.name}
+								i={i}
+								key={"audio" + i}
+								autors={item.artists}
+								token={token}
+								checkId={checkIdList}
+							/>
+							<div>
+								<p className="text-white mx-auto">{item.name}</p>
+								<div className="flex flex-row text-gray-500 text-sm">
+									{item.artists.length > 1 ? (
+										item.artists.map((artist, index) => {
+											return (
+												<p>
+													{artist.name}
+													{index < 1 ? <i className="pr-1">,</i> : ""}
+												</p>
+											);
+										})
+									) : (
+										<p>{item.artists[0].name}</p>
+									)}
+								</div>
+							</div>
+							<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.duration_ms)}</p>
+							<p className="text-white">{item.album?.name}</p>
 						</div>
-						<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.duration_ms)}</p>
-						<p className="text-white">{item.album?.name}</p>
+					);
+				})}
+				{type === "search" && !blank ? (
+					<div className="flex mt-5 w-max mx-auto">
+						<img src={LeftArrow} onClick={() => offsetSubtract()} className="invert w-5 h-auto" />
+						<p className="text-white">{offset / 10}</p>
+						<img src={RightArrow} onClick={() => offsetAdd()} className="invert w-5 h-auto" />
 					</div>
-				);
-			})}
-			{type === "search" ? (
-				<div className="flex mt-5 w-max mx-auto">
-					<img src={LeftArrow} onClick={() => offsetSubtract()} className="invert w-5 h-auto" />
-					<p className="text-white">{offset / 10}</p>
-					<img src={RightArrow} onClick={() => offsetAdd()} className="invert w-5 h-auto" />
-				</div>
-			) : null}
-		</div>
-	);
+				) : null}
+			</>
+		);
+	} else return null;
 }

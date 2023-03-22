@@ -17,8 +17,8 @@ export const spotifyApi = createApi({
 			})
 		}),
 		checkTrackExist: builder.query({
-			query: ({id = "", token}) => ({
-				url: `https://api.spotify.com/v1/me/tracks/contains?ids=${id}`,
+			query: ({id = [], token}) => ({
+				url: `https://api.spotify.com/v1/me/tracks/contains?ids=${id.toString()}`,
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",

@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation} from "react-router-dom";
 import CardsTracks from "../Components/Cards";
 import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
@@ -17,11 +16,14 @@ function LikedSongs() {
 			dispatch(updateTrackFavList(data.items));
 		}
 	}, [data]);
-	const newTracksArray = tracks.map((item) => item.track);
-
-	return tracks === [] ? null : (
+	const newTracksArray = tracks.map((item) => item.track) || [];
+	return newTracksArray === [] ? null : (
 		<div className="bg-zinc-900 min-h-screen min-w-screen">
 			<SideMenu />
+			<div className="flex flex-col ml-44 bg-gradient-to-r from-emerald-900 to-emerald-600">
+				<p className="text-slate-500 sm:text-[.3rem] md:text-[.9rem]  font-bold ml-10 relative top-10">PLAYLIST</p>
+				<p className="text-white sm:text-[1rem] md:text-[6rem] font-bold ml-10 inline">Tus me gusta</p>
+			</div>
 			<div className="flex flex-col justify-center items-center ml-56 pt-10 mr-8 pb-32">
 				<div className="grid grid-cols-6 grid-rows-1 items-center justify-between w-full">
 					<p className="text-white col-span-3 w-full px-3">#</p>

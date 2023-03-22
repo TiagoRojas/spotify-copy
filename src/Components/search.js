@@ -19,7 +19,7 @@ export default function Search({accessToken}) {
 			}
 			if (e.target.value === "") {
 				dispatch(isBlank(true));
-				dispatch(timestamp({timestamp: 0, currentAudio: ""}));
+				dispatch(timestamp({timestamp: 0, audio: ""}));
 				dispatch(isPlaying(false));
 			}
 		}, 1000);

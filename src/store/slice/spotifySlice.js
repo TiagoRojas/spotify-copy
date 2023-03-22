@@ -10,7 +10,16 @@ const initialState = {
 	loaded: false,
 	isBlank: true,
 	timestamp: 0,
-	currentAudio: "",
+	currentPlaying: {
+		audio: "",
+		item: {
+			name: "",
+			image: "",
+			autors: ""
+		}
+	},
+	isLooping: false,
+	volume: 0.35,
 	isPlaying: false,
 	offset: 0,
 	currentId: ""
@@ -29,8 +38,17 @@ export const spotifySlice = createSlice({
 			state.isBlank = action.payload;
 		},
 		timestamp: (state, action) => {
-			state.currentAudio = action.payload.currentAudio;
+			state.currentPlaying.audio = action.payload.audio;
 			state.timestamp = action.payload.timestamp;
+		},
+		changeMusic: (state, action) => {
+			state.currentPlaying.item = action.payload;
+		},
+		changeLoop: (state, action) => {
+			state.isLooping = action.payload;
+		},
+		changeVolume: (state, action) => {
+			state.volume = action.payload;
 		},
 		isPlaying: (state, action) => {
 			state.isPlaying = action.payload;
@@ -47,4 +65,4 @@ export const spotifySlice = createSlice({
 	}
 });
 
-export const {addData, isBlank, timestamp, isPlaying, changeOffset, changeId, updateTrackFavList} = spotifySlice.actions;
+export const {addData, isBlank, changeMusic, changeLoop, timestamp, changeVolume, isPlaying, changeOffset, changeId, updateTrackFavList} = spotifySlice.actions;
