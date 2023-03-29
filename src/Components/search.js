@@ -2,7 +2,7 @@ import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {isBlank, isPlaying, timestamp} from "../store/slice/spotifySlice";
 import SearchData from "./searchData";
-export default function Search({accessToken}) {
+export default function Search({accessToken, userType}) {
 	const dispatch = useDispatch();
 	const blank = useSelector((state) => state.spotifyData.isBlank);
 	const offset = useSelector((state) => state.spotifyData.offset);
@@ -33,6 +33,7 @@ export default function Search({accessToken}) {
 				className="p-5 mx-5 text-lg text-white w-1/2 rounded-xl bg-zinc-900 border-gray-700 border-2"
 			/>
 			{blank ? null : <SearchData value={value} token={accessToken} offset={offset} />}
+			{userType === "free" ? <div className="text-white">Solo podras escuchar una vista previa de la musica</div> : null}
 		</>
 	);
 }

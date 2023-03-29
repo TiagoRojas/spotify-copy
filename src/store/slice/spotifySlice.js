@@ -1,8 +1,9 @@
 import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
+	mode: "",
 	data: {
 		tracks: [],
-		album: [],
+		albums: [],
 		artists: [],
 		playlists: []
 	},
@@ -28,9 +29,21 @@ export const spotifySlice = createSlice({
 	name: "SpotifyData",
 	initialState,
 	reducers: {
+		changeMode: (state, action) => {
+			state.mode = action.payload;
+		},
 		addData: (state, action) => {
-			if (action.payload !== undefined) {
-				state.data.tracks = action.payload.tracks.items;
+			if (action.payload.data !== undefined) {
+				if (action.payload.type === "search") {
+					state.data.tracks = action.payload.data.tracks.items;
+					state.data.artists = action.payload.data.artists.items;
+					state.data.playlists = action.payload.data.tracks.playlists;
+					state.data.albums = action.payload.data.tracks.albums;
+				}
+				if (action.payload.type === "playlist") {
+					console.log(action.payload);
+					state.data.tracks = action.payload.data.tracks.items;
+				}
 				state.loaded = true;
 			}
 		},
@@ -60,9 +73,10 @@ export const spotifySlice = createSlice({
 			state.currentId = action.payload;
 		},
 		updateTrackFavList: (state, action) => {
-			state.trackFavList = action.payload;
+			state.trackFavList = [...state.trackFavList, ...action.payload];
 		}
 	}
 });
 
-export const {addData, isBlank, changeMusic, changeLoop, timestamp, changeVolume, isPlaying, changeOffset, changeId, updateTrackFavList} = spotifySlice.actions;
+export const {changeMode, addData, isBlank, changeMusic, changeLoop, timestamp, changeVolume, isPlaying, changeOffset, changeId, updateTrackFavList} =
+	spotifySlice.actions;

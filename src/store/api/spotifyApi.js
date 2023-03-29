@@ -47,8 +47,8 @@ export const spotifyApi = createApi({
 			})
 		}),
 		trackFavoriteList: builder.query({
-			query: (token) => ({
-				url: `https://api.spotify.com/v1/me/tracks`,
+			query: ({token, offset}) => ({
+				url: `https://api.spotify.com/v1/me/tracks?limit=20&offset=${offset}`,
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",

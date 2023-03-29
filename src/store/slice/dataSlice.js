@@ -1,7 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-	code: ""
+	code: "",
+	userPlaylist: []
 };
 export const dataSlice = createSlice({
 	name: "SpotifyData",
@@ -9,8 +10,11 @@ export const dataSlice = createSlice({
 	reducers: {
 		changeCode: (state, action) => {
 			state.code = action.payload;
+		},
+		updatePlaylist: (state, action) => {
+			state.userPlaylist = action.payload;
 		}
 	}
 });
 
-export const {changeCode} = dataSlice.actions;
+export const {changeCode, updatePlaylist} = dataSlice.actions;

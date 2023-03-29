@@ -15,9 +15,11 @@ export default function Player() {
 	let audioPlaying = useSelector((state) => state.spotifyData.currentPlaying.audio);
 	let currentVolume = useSelector((state) => state.spotifyData.volume);
 	let isPlaying = useSelector((state) => state.spotifyData.isPlaying);
+	let currentTime = useSelector((state) => state.spotifyData.timestamp);
 	let nowPlaying = useSelector((state) => state.spotifyData.currentPlaying.item);
 	let isLooping = useSelector((state) => state.spotifyData.isLooping) || false;
 	let dispatchAudio;
+	let maxValue;
 	let volumeIcon = document.querySelector(".volumeIcon");
 	const {pause, resume} = useMusic();
 
@@ -36,7 +38,6 @@ export default function Player() {
 			audio.volume = e;
 		}
 		if (e == 0) {
-			console.log(e);
 			volumeIcon.src = volumeMuted;
 		} else volumeIcon.src = volumeNormal;
 	};
@@ -44,6 +45,7 @@ export default function Player() {
 	const handleMute = () => {
 		let audio = document.querySelector(audioPlaying);
 		let audioControler = document.querySelector("#controlVolume");
+		console.dir(audio);
 		if (audio.volume === 0) {
 			audio.volume = currentVolume;
 			audioControler.value = currentVolume;
@@ -65,8 +67,7 @@ export default function Player() {
 				audio.loop = false;
 				loopElement.src = loopIcon;
 			}
-		}
-		return;
+		} else return;
 	}, [isLooping]);
 	const handleLoop = () => {
 		dispatch(changeLoop(!isLooping));
@@ -82,8 +83,8 @@ export default function Player() {
 		document.querySelector("#seeker").value = 0;
 	}, [nowPlaying]);
 	return (
-		<div className="grid grid-cols-3 grid-rows-1 fixed bottom-0 w-full md:h-32 sm:h-16 flex-shrink-0 bg-zinc-900 border-t border-zinc-700 text-white z-10">
-			<div className="flex flex-row items-center">
+		<div className="grid grid-cols-3 grid-rows-1 fixed bottom-0 w-full md:h-32 sm:h-16 flex-shrink-0 bg-zinc-900 border-t border-zinc-700 text-white z-40">
+			<div className="flex flex-row items-center ml-10">
 				{nowPlaying.musicName !== undefined ? (
 					<>
 						<img src={nowPlaying.img} className="w-16 h-16 mr-6" />
@@ -102,12 +103,16 @@ export default function Player() {
 				) : null}
 			</div>
 			<div className="flex justify-center items-center flex-col">
-				<input type="range" max={29.779592} min={0} step={0.01} onInput={(e) => changeTime(e.target.value)} id="seeker" className="w-full py-5 " />
+				<div className="w-full flex flex-row items-center">
+					<p className="m-2 text-white text-[0.9rem]">0:{currentTime < 10 ? "0" + Math.floor(currentTime) : Math.floor(currentTime)}</p>
+					<input type="range" max={29.779592} min={0} step={0.01} onInput={(e) => changeTime(e.target.value)} id="seeker" className="w-full py-5" />
+					<p className="m-2 text-white text-[0.9rem]">0:30</p>
+				</div>
 				<div>
 					<img src={isPlaying ? PauseBtn : PlayerBtn} onClick={() => playerMusic()} className="w-16 h-auto" />
 				</div>
 			</div>
-			<div className="flex flex-row items-center ">
+			<div className="flex flex-row items-center justify-self-end mr-10">
 				<img src={loopIcon} className="w-6 h-6 mr-4 loopIcon" onClick={() => handleLoop()} />
 				<img src={volumeNormal} className="w-6 h-6 invert mr-4 volumeIcon" onClick={() => handleMute()} />
 				<input type="range" max={0.35} min={0} step={0.001} onInput={(e) => handleVolume(e.target.value)} id="controlVolume" />

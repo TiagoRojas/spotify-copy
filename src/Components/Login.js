@@ -1,15 +1,26 @@
-const scopes = "user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state";
-const AUTH_URL =
-	"https://accounts.spotify.com/authorize?client_id=c5154a2e992646679ab9f91fb823cde1&response_type=code&scope=" +
-	encodeURIComponent(scopes) +
-	"&redirect_uri=http://localhost:3000/";
+import {useDispatch} from "react-redux";
+import {changeMode} from "../store/slice/spotifySlice";
+
+const scopes =
+	"user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state playlist-read-private";
+const client_id = process.env.REACT_APP_CLIENT_ID;
+const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&scope=${encodeURIComponent(
+	scopes
+)}&redirect_uri=http://localhost:3000/`;
 
 export default function Login() {
+	const dispatch = useDispatch();
+	const handleOfflineMode = () => {
+		dispatch(changeMode("offline"));
+	};
 	return (
-		<div className="flex justify-center items-center h-screen bg-zinc-900">
+		<div className="flex flex-col justify-center items-center h-screen bg-zinc-900">
 			<a href={AUTH_URL} className="bg-green-700 p-7 rounded-full text-white font-bold text-xl">
 				Login with Spotify
 			</a>
+			<p className="text-white mt-5" onClick={() => handleOfflineMode()}>
+				Offline Mode {"(limited)"}
+			</p>
 		</div>
 	);
 }

@@ -41,13 +41,14 @@ export default function CardsTracks({token, data, type = ""}) {
 	const offsetAdd = () => {
 		dispatch(changeOffset(10));
 	};
+
 	if (data !== undefined) {
 		return (
 			<>
 				{data.map((item, i) => {
 					checkIdList = [...checkIdList, item.id];
 					return (
-						<div key={"card" + i} className="grid grid-cols-6 auto-rows-auto items-center w-full p-3 rounded text-lg hover:text-xl hover:bg-zinc-700">
+						<div key={"card" + item.id} className="grid grid-cols-6 auto-rows-auto items-center w-full p-3 rounded text-lg hover:text-xl hover:bg-zinc-700">
 							<p className="text-white text-sm">{i + 1}</p>
 							<div>
 								<img src={heart} alt="heart" className={"w-6 h-auto heart" + i} onClick={() => addRemoveFav({id: item.id, i})} />
@@ -61,6 +62,7 @@ export default function CardsTracks({token, data, type = ""}) {
 								autors={item.artists}
 								token={token}
 								checkId={checkIdList}
+								length={data.length}
 							/>
 							<div>
 								<p className="text-white mx-auto">{item.name}</p>
