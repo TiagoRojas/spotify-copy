@@ -14,7 +14,7 @@ export default function Login() {
 		dispatch(changeMode("offline"));
 	};
 	return (
-		<div className="flex flex-col justify-center items-center h-screen bg-zinc-900">
+		<div className="flex flex-col justify-center items-center h-screen bg-zinc-900 select-none">
 			<a href={AUTH_URL} className="bg-green-700 p-7 rounded-full text-white font-bold text-xl">
 				Login with Spotify
 			</a>

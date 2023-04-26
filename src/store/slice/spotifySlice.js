@@ -5,10 +5,29 @@ const initialState = {
 		tracks: [],
 		albums: [],
 		artists: [],
-		playlists: []
+		playlists: [],
+		userPlaylist: {
+			tracks: [],
+			playlistInfo: {
+				img: "",
+				name: "",
+				owner: "",
+				followers: 0
+			}
+		},
+		newReleases: []
 	},
+	showingAlbum: {
+		data: [],
+		id: ""
+	},
+	showingPlaylist: [],
+	searchValue: "",
 	trackFavList: [],
+	checkListPlaylist: [],
+	checkedPlaylistId: "",
 	loaded: false,
+	isChecked: false,
 	isBlank: true,
 	timestamp: 0,
 	currentPlaying: {
@@ -20,7 +39,7 @@ const initialState = {
 		}
 	},
 	isLooping: false,
-	volume: 0.35,
+	volume: 0.1,
 	isPlaying: false,
 	offset: 0,
 	currentId: ""
@@ -32,20 +51,55 @@ export const spotifySlice = createSlice({
 		changeMode: (state, action) => {
 			state.mode = action.payload;
 		},
-		addData: (state, action) => {
-			if (action.payload.data !== undefined) {
-				if (action.payload.type === "search") {
-					state.data.tracks = action.payload.data.tracks.items;
-					state.data.artists = action.payload.data.artists.items;
-					state.data.playlists = action.payload.data.tracks.playlists;
-					state.data.albums = action.payload.data.tracks.albums;
-				}
-				if (action.payload.type === "playlist") {
-					console.log(action.payload);
-					state.data.tracks = action.payload.data.tracks.items;
-				}
-				state.loaded = true;
+		changeData: (state, action) => {
+			if (action.payload.type === "search") {
+				state.data.tracks = [...state.data.tracks, ...action.payload.data.tracks.items];
+				state.data.artists = [...state.data.artists, ...action.payload.data.artists.items];
+				state.data.playlists = [...state.data.playlists, ...action.payload.data.playlists.items];
+				state.data.albums = [...state.data.albums, ...action.payload.data.albums.items];
 			}
+			if (action.payload.type === "playlist") {
+				state.data.userPlaylist.playlistInfo.owner = action.payload.data.owner.display_name;
+				state.data.userPlaylist.playlistInfo.followers = action.payload.data.followers.total;
+				state.data.userPlaylist.tracks = action.payload.data.tracks.items;
+				state.data.userPlaylist.playlistInfo.name = action.payload.name;
+				state.data.userPlaylist.playlistInfo.img = action.payload.image;
+			}
+			if (action.payload.type === "newReleases") {
+				state.data.newReleases = action.payload.data;
+			}
+			if (action.payload.type === "reset") {
+				state.data.tracks = [];
+				state.data.artists = [];
+				state.data.playlists = [];
+				state.data.albums = [];
+				state.data.userPlaylist.tracks = [];
+			}
+			state.loaded = action.payload.loaded;
+		},
+		updateShowingPlaylist: (state, action) => {
+			state.showingPlaylist = action.payload;
+		},
+		changeShowingAlbum: (state, action) => {
+			if (action.payload.data === undefined) {
+				state.showingAlbum.id = action.payload.id;
+			} else state.showingAlbum.data = action.payload.data;
+		},
+		updateSearch: (state, action) => {
+			state.searchValue = action.payload;
+		},
+		updateCheckedPlaylist: (state, action) => {
+			if (action.payload.playlist === undefined) {
+				state.checkListPlaylist = state.data.checkListPlaylist;
+				state.isChecked = action.payload.checked;
+			}
+			if (action.payload.playlist !== undefined) {
+				state.checkListPlaylist = action.payload.playlist;
+				state.isChecked = action.payload.checked;
+			}
+		},
+		changeCheckedIdPlaylist: (state, action) => {
+			state.checkedPlaylistId = action.payload;
 		},
 		isBlank: (state, action) => {
 			state.isBlank = action.payload;
@@ -55,7 +109,8 @@ export const spotifySlice = createSlice({
 			state.timestamp = action.payload.timestamp;
 		},
 		changeMusic: (state, action) => {
-			state.currentPlaying.item = action.payload;
+			state.currentPlaying.audio = action.payload.name;
+			state.currentPlaying.item = action.payload.item;
 		},
 		changeLoop: (state, action) => {
 			state.isLooping = action.payload;
@@ -67,16 +122,38 @@ export const spotifySlice = createSlice({
 			state.isPlaying = action.payload;
 		},
 		changeOffset: (state, action) => {
-			state.offset = state.offset + action.payload;
+			state.offset = action.payload;
 		},
 		changeId: (state, action) => {
 			state.currentId = action.payload;
 		},
 		updateTrackFavList: (state, action) => {
-			state.trackFavList = [...state.trackFavList, ...action.payload];
+			console.log(action.payload);
+			if (action.payload.type === "reset") {
+				state.trackFavList = [];
+			}
+			if (action.payload.type === "add") {
+				state.trackFavList = [...state.trackFavList, ...action.payload.data];
+			} else return;
 		}
 	}
 });
 
-export const {changeMode, addData, isBlank, changeMusic, changeLoop, timestamp, changeVolume, isPlaying, changeOffset, changeId, updateTrackFavList} =
-	spotifySlice.actions;
+export const {
+	changeMode,
+	changeData,
+	updateShowingPlaylist,
+	changeShowingAlbum,
+	updateSearch,
+	updateCheckedPlaylist,
+	changeCheckedIdPlaylist,
+	isBlank,
+	changeMusic,
+	changeLoop,
+	timestamp,
+	changeVolume,
+	isPlaying,
+	changeOffset,
+	changeId,
+	updateTrackFavList
+} = spotifySlice.actions;

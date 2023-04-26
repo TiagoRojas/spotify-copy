@@ -8,5 +8,8 @@ export const store = configureStore({
 		data: dataSlice.reducer,
 		[spotifyApi.reducerPath]: spotifyApi.reducer
 	},
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(spotifyApi.middleware)
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: false
+		}).concat(spotifyApi.middleware)
 });

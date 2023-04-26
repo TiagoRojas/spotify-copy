@@ -7,18 +7,28 @@ export const spotifyApi = createApi({
 	}),
 	endpoints: (builder) => ({
 		getTrack: builder.query({
-			query: ({value = "", accessCode, offset = 0}) => ({
-				url: `/search?q=${value}&type=track%2Calbum%2Cplaylist%2Cartist&limit=10&offset=${offset}`,
+			query: ({value = "", token, offset = 0}) => ({
+				url: `/search?q=${value}&type=track%2Calbum%2Cplaylist%2Cartist&limit=21&offset=${offset}`,
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${accessCode}`
+					Authorization: `Bearer ${token}`
+				}
+			})
+		}),
+		getAlbum: builder.query({
+			query: ({id, token}) => ({
+				url: `/albums/${id}`,
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
 				}
 			})
 		}),
 		checkTrackExist: builder.query({
 			query: ({id = [], token}) => ({
-				url: `https://api.spotify.com/v1/me/tracks/contains?ids=${id.toString()}`,
+				url: `/me/tracks/contains?ids=${id.toString()}`,
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -28,7 +38,7 @@ export const spotifyApi = createApi({
 		}),
 		addTrackFavorite: builder.query({
 			query: ({id, token}) => ({
-				url: `https://api.spotify.com/v1/me/tracks?ids=${id}`,
+				url: `/me/tracks?ids=${id}`,
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
@@ -38,7 +48,7 @@ export const spotifyApi = createApi({
 		}),
 		removeTrackFavorite: builder.query({
 			query: ({id, token}) => ({
-				url: `https://api.spotify.com/v1/me/tracks?ids=${id}`,
+				url: `/me/tracks?ids=${id}`,
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
@@ -46,9 +56,19 @@ export const spotifyApi = createApi({
 				}
 			})
 		}),
-		trackFavoriteList: builder.query({
+		getFavoriteTracks: builder.query({
 			query: ({token, offset}) => ({
-				url: `https://api.spotify.com/v1/me/tracks?limit=20&offset=${offset}`,
+				url: `/me/tracks?limit=25&offset=${offset}`,
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			})
+		}),
+		getNewReleases: builder.query({
+			query: ({token}) => ({
+				url: `/browse/new-releases`,
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -58,4 +78,12 @@ export const spotifyApi = createApi({
 		})
 	})
 });
-export const {useGetTrackQuery, useCheckTrackExistQuery, useAddTrackFavoriteQuery, useRemoveTrackFavoriteQuery, useTrackFavoriteListQuery} = spotifyApi;
+export const {
+	useLazyGetTrackQuery,
+	useLazyGetAlbumQuery,
+	useCheckTrackExistQuery,
+	useLazyAddTrackFavoriteQuery,
+	useLazyRemoveTrackFavoriteQuery,
+	useLazyGetFavoriteTracksQuery,
+	useLazyGetNewReleasesQuery
+} = spotifyApi;
