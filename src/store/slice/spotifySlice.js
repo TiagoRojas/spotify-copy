@@ -21,7 +21,10 @@ const initialState = {
 		data: [],
 		id: ""
 	},
-	showingPlaylist: [],
+	showingPlaylist: {
+		data: [],
+		id: ""
+	},
 	searchValue: "",
 	trackFavList: [],
 	checkListPlaylist: [],
@@ -59,6 +62,7 @@ export const spotifySlice = createSlice({
 				state.data.albums = [...state.data.albums, ...action.payload.data.albums.items];
 			}
 			if (action.payload.type === "playlist") {
+				console.log(action.payload);
 				state.data.userPlaylist.playlistInfo.owner = action.payload.data.owner.display_name;
 				state.data.userPlaylist.playlistInfo.followers = action.payload.data.followers.total;
 				state.data.userPlaylist.tracks = action.payload.data.tracks.items;
@@ -78,7 +82,11 @@ export const spotifySlice = createSlice({
 			state.loaded = action.payload.loaded;
 		},
 		updateShowingPlaylist: (state, action) => {
-			state.showingPlaylist = action.payload;
+			if (action.payload.data === undefined) {
+				state.showingPlaylist.id = action.payload;
+				return;
+			}
+			state.showingPlaylist.data = action.payload.data;
 		},
 		changeShowingAlbum: (state, action) => {
 			if (action.payload.data === undefined) {

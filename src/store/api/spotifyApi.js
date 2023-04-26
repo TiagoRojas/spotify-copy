@@ -26,6 +26,16 @@ export const spotifyApi = createApi({
 				}
 			})
 		}),
+		getPlaylist: builder.query({
+			query: ({id, token}) => ({
+				url: `/playlists/${id}`,
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			})
+		}),
 		checkTrackExist: builder.query({
 			query: ({id = [], token}) => ({
 				url: `/me/tracks/contains?ids=${id.toString()}`,
@@ -81,6 +91,7 @@ export const spotifyApi = createApi({
 export const {
 	useLazyGetTrackQuery,
 	useLazyGetAlbumQuery,
+	useLazyGetPlaylistQuery,
 	useCheckTrackExistQuery,
 	useLazyAddTrackFavoriteQuery,
 	useLazyRemoveTrackFavoriteQuery,

@@ -6,9 +6,9 @@ import heartFilled from "../assets/heartFilled.png";
 import playBtnGreen from "../assets/playBtnGreen.png";
 import defaultArtist from "../assets/defaultArtist.png";
 
-import {useLazyAddTrackFavoriteQuery, useLazyGetAlbumQuery, useLazyRemoveTrackFavoriteQuery} from "../store/api/spotifyApi";
+import {useLazyAddTrackFavoriteQuery, useLazyGetAlbumQuery, useLazyGetPlaylistQuery, useLazyRemoveTrackFavoriteQuery} from "../store/api/spotifyApi";
 import {useDispatch, useSelector} from "react-redux";
-import {changeOffset, changeShowingAlbum} from "../store/slice/spotifySlice";
+import {changeData, changeOffset, changeShowingAlbum, updateShowingPlaylist} from "../store/slice/spotifySlice";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import useMusic from "../hooks/useMusic";
@@ -21,15 +21,17 @@ export default function CardsTracks({data, type}) {
 	const dispatch = useDispatch();
 	const {start, pause, resume, stop} = useMusic();
 	const tracksData = useSelector((state) => state.spotifyData.data.tracks);
+	const playlistData = useSelector((state) => state.spotifyData.data.playlists);
 	const albumData = useSelector((state) => state.spotifyData.data.albums);
 	const artistData = useSelector((state) => state.spotifyData.data.artists);
 	const likedSongsData = useSelector((state) => state.spotifyData.trackFavList);
 	const newReleasesData = useSelector((state) => state.spotifyData.data.newReleases);
-	const showingPlaylist = useSelector((state) => state.spotifyData.showingPlaylist);
+	// const userPlaylistTrack = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
+	const userPlaylist = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
 	const [currentHover, setCurrentHover] = useState("");
+	const [albumHover, setAlbumHover] = useState("");
 	const [currentPlaying, setCurrentPlaying] = useState("none");
 	const [artistHover, setArtistHover] = useState("");
-	const [imageId, setImageId] = useState(0);
 	let checkIdList = [];
 	const addRemoveFav = ({id, i}) => {
 		let heartElement = document.querySelector(".heart" + i);
@@ -62,9 +64,9 @@ export default function CardsTracks({data, type}) {
 			navigate("/");
 		}
 	}, [code]);
-	const handleSearchPlaylist = ({id, name}) => {
+	const handleSearchAlbum = ({id, name}) => {
 		dispatch(changeShowingAlbum({id}));
-		navigate(`/album/${name}`);
+		navigate(`/search/album/${name}`);
 	};
 	const handlePlay = ({musicName, autors, img, i, music}) => {
 		if (currentPlaying !== "audio" + i) {
@@ -74,6 +76,11 @@ export default function CardsTracks({data, type}) {
 			setCurrentPlaying("");
 			stop(i);
 		}
+	};
+
+	const handleSearchPlaylist = ({id, name, img, owner}) => {
+		dispatch(updateShowingPlaylist(id));
+		navigate("/search/playlist/" + id);
 	};
 
 	// This is for detecting if one audio is playing at the moment so the others stops
@@ -91,7 +98,65 @@ export default function CardsTracks({data, type}) {
 
 	switch (type) {
 		case "todo":
-			return <div>todo</div>;
+			return (
+				<div className="sm:pl-52 flex flex-col sm:grid sm:grid-cols-5">
+					<div className="text-white col-span-3">
+						<p className="sm:text-[48px] font-bold">Albums</p>
+						<div className="flex justify-evenly flex-wrap">
+							{albumData.slice(0, 6).map((item, i) => (
+								<div className="truncate hover:bg-zinc-800 p-2 group sm:w-40 sm:h-40 flex flex-col items-center">
+									<img src={item.images[0].url} className="sm:w-28 sm:h-auto aspect-square" />
+									<div className="absolute">
+										<img
+											src={playBtnGreen}
+											className="rounded-full w-8 lg:w-12 lg:h-12 shadow-lg shadow-black my-3 relative opacity-0 top-16 lg:left-12 left-3 group-hover:opacity-100 group-hover:bottom-14 duration-300 cursor-pointer"
+											onClick={() => handleSearchAlbum({id: item.id, name: item.name})}
+										/>
+									</div>
+									<p className="truncate self-start ml-4">{item.name}</p>
+								</div>
+							))}
+						</div>
+					</div>
+					<div className="text-white col-span-2 mx-5">
+						<p className="sm:text-[48px] font-bold">Canciones</p>
+						{tracksData.slice(0, 4).map((item, i) => (
+							<div
+								className="truncate hover:bg-[#181818] p-2 flex items-center group"
+								onMouseEnter={() => setCurrentHover("item" + i)}
+								onMouseLeave={() => setCurrentHover("")}
+							>
+								<img src={item.album.images[0].url} className="w-20 sm:w-12 h-auto rounded" />
+								<div className="absolute flex items-center justify-center">
+									<img
+										src={playButton}
+										className="invert w-6 sm:w-6 h-auto my-3 relative left-7 sm:left-3 cursor-pointer opacity-0 top-5 group-hover:opacity-100 group-hover:top-0 duration-300"
+										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name})}
+									/>
+								</div>
+								<p className="truncate w-full ml-3">{item.name}</p>
+								<p className="w-full text-end">{millisToMinutesAndSeconds(item.duration_ms)}</p>
+							</div>
+						))}
+					</div>
+					<div className="text-white col-span-5">
+						<p className="sm:text-[48px] font-bold">Artistas</p>
+						<div className="flex flex-col sm:flex-row flex-wrap">
+							{artistData.slice(0, 10).map((item, i) => (
+								<div className="flex flex-col mx-auto bg-[#181818] p-2 rounded">
+									{item?.images[0]?.url ? (
+										<img src={item.images[0].url} alt={"artistsPicture" + i} className="rounded-full sm:w-36 sm:h-36 shadow-lg shadow-black my-3" />
+									) : (
+										<img src={defaultArtist} alt={"artistsPicture" + i} className="bg-[#282828] rounded-full sm:w-36 sm:h-36 shadow-lg shadow-black my-3 p-5" />
+									)}
+
+									<p>{item.name}</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			);
 		case "album":
 			return (
 				<div className="pl-52 pb-32 flex flex-row min-w-screen flex-wrap">
@@ -100,7 +165,7 @@ export default function CardsTracks({data, type}) {
 							<div
 								key={"album" + i}
 								className="flex flex-col items-center justify-center m-3 w-52 p-5 bg-zinc-800 hover:bg-zinc-700 duration-200 rounded-md"
-								onClick={() => handleSearchPlaylist({id: item.id, name: item.name})}
+								onClick={() => handleSearchAlbum({id: item.id, name: item.name})}
 							>
 								<img src={item.images[0].url} alt={"image of " + item.name} className="w-52 h-auto object-cover rounded-md" />
 								<div className="self-start w-40 items-center h-10">
@@ -124,7 +189,7 @@ export default function CardsTracks({data, type}) {
 							<div
 								key={"release" + i}
 								className="flex flex-col items-center justify-center m-3 w-52 p-5 bg-zinc-800 hover:bg-zinc-700 duration-200 rounded-md"
-								onClick={() => handleSearchPlaylist({id: item.id, name: item.name})}
+								onClick={() => handleSearchAlbum({id: item.id, name: item.name})}
 							>
 								<img src={item.images[0].url} alt={"image of " + item.name} className="w-52 h-auto object-cover rounded-md" />
 								<div className="self-start w-40 items-center h-10">
@@ -155,16 +220,17 @@ export default function CardsTracks({data, type}) {
 						return (
 							<div
 								key={"dataProp" + i}
-								className="grid grid-cols-[2rem,10rem,2fr] grid-flow-col items-center p-3 rounded text-lg hover:bg-zinc-700 h-20 cursor-default"
+								className="grid grid-cols-[2rem,10rem,2fr] grid-flow-col items-center p-3 rounded text-lg hover:bg-zinc-700 h-20 cursor-default group"
 								onMouseEnter={() => setCurrentHover("item" + i)}
 								onMouseLeave={() => setCurrentHover("")}
 							>
-								<div className="mx-3 justify-self-center inline-block">
-									{currentHover === "item" + i ? (
-										<img src={playButton} className="h-5 w-auto invert mr-5" onClick={() => handlePlay({autors: item.artists, i, musicName: item.name})} />
-									) : (
-										<p className="text-white text-sm text-center mr-5">{i + 1}</p>
-									)}
+								<div className="justify-self-center inline-block">
+									<img
+										src={playButton}
+										className="h-5 w-5 invert mr-4 mb-1 hidden group-hover:inline"
+										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, music: item.preview_url})}
+									/>
+									<p className="text-white text-sm mr-5 group-hover:hidden">{i + 1}</p>
 								</div>
 								<audio src={item.preview_url} className={`audio` + i} />
 								<p className="text-white justify-self-start w-max">{item.name}</p>
@@ -225,7 +291,7 @@ export default function CardsTracks({data, type}) {
 					))}
 				</div>
 			);
-		case "playlist":
+		case "playlistView":
 			return (
 				<>
 					<div className="grid sm:grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-4">
@@ -234,7 +300,7 @@ export default function CardsTracks({data, type}) {
 						<p className="col-span-2 pr-8 hidden sm:inline">ARTISTS</p>
 						<p className="px-8 sm:justify-self-start justify-self-end">time</p>
 					</div>
-					{showingPlaylist.map((item, i) => (
+					{userPlaylist.map((item, i) => (
 						<div
 							key={"likedSong" + i}
 							className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full my-5 select-none px-2 sm:px-4"
@@ -246,21 +312,23 @@ export default function CardsTracks({data, type}) {
 									<img
 										src={playButton}
 										className="h-5 w-auto invert mr-5"
-										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, music: item.preview_url, img: item.album.images[0].url})}
+										onClick={() =>
+											handlePlay({autors: item.track.artists, i, musicName: item.track.name, music: item.track.preview_url, img: item.track.album.images[0].url})
+										}
 									/>
 								) : (
 									<p className="text-white text-sm text-center mr-5">{i + 1}</p>
 								)}
 							</div>
 							<div className="flex flex-row items-center truncate col-span-2">
-								<audio src={item.preview_url} className={`audio` + i} />
-								<img src={item.album.images[1].url} className="hidden sm:inline w-16 h-16 mr-2" />
-								<p className="text-white text-center truncate">{item.name}</p>
+								<audio src={item.track.preview_url} className={`audio` + i} />
+								<img src={item.track.album.images[1].url} className="hidden sm:inline w-16 h-16 mr-2" />
+								<p className="text-white text-center truncate">{item.track.name}</p>
 							</div>
-							<p className="text-white text-start sm:w-32 hidden sm:inline">{item.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
+							<p className="text-white text-start sm:w-32 hidden sm:inline">{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
 							<div className="px-8 flex flex-row justify-self-end">
-								<img src={heart} alt="heart" className={"w-5 h-5 sm:w-8 sm:h-8 cursor-pointer mr-10 heart" + i} onClick={() => addRemoveFav({id: item.id, i})} />
-								<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.duration_ms)}</p>
+								<img src={heart} alt="heart" className={"w-5 h-5 sm:w-8 sm:h-8 cursor-pointer mr-10 heart" + i} onClick={() => addRemoveFav({id: item.track.id, i})} />
+								<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.track.duration_ms)}</p>
 							</div>
 						</div>
 					))}
@@ -276,18 +344,14 @@ export default function CardsTracks({data, type}) {
 						<p className="px-8 ">time</p>
 					</div>
 					{tracksData.map((item, i) => (
-						<div
-							key={"likedSong" + i}
-							className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full my-5"
-							onMouseEnter={() => setCurrentHover("item" + i)}
-							onMouseLeave={() => setCurrentHover("")}
-						>
-							<div className="flex items-center">
-								{currentHover === "item" + i ? (
-									<img src={playButton} className="h-5 w-auto invert mr-5" onClick={() => handlePlay({autors: item.artists, i, musicName: item.name})} />
-								) : (
-									<p className="text-white text-sm text-center mr-5">{i + 1}</p>
-								)}
+						<div key={"likedSong" + i} className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full my-5 group">
+							<div className="flex justify-center items-center">
+								<img
+									src={playButton}
+									className="h-5 w-auto invert hidden group-hover:inline"
+									onClick={() => handlePlay({autors: item.artists, i, musicName: item.name})}
+								/>
+								<p className="text-white text-sm text-center group-hover:hidden">{i + 1}</p>
 							</div>
 							<div className="flex flex-row items-center truncate">
 								<audio src={item.preview_url} className={`audio` + i} />
@@ -305,24 +369,21 @@ export default function CardsTracks({data, type}) {
 			);
 		case "artists":
 			return (
-				<div className="ml-52 mb-32 flex flex-row flex-wrap">
+				<div className="ml-52 mb-32 flex flex-row flex-wrap justify-evenly">
 					{artistData.map((item, i) => (
-						<div
-							className="bg-[#181818] hover:bg-zinc-800 rounded-xl ml-4 p-2 flex flex-col justify-center text-white mt-5 duration-300"
-							onMouseEnter={() => setArtistHover("artist" + i)}
-							onMouseLeave={() => setArtistHover("")}
-						>
+						<div className="bg-[#181818] rounded pb-3 hover:bg-zinc-800 ml-4 flex flex-col items-center justify-center text-white mt-5 duration-300 group">
 							{item?.images[0]?.url ? (
-								<img src={item.images[0].url} alt={"artistsPicture" + i} className="rounded-full w-48 h-48 shadow-lg shadow-black my-3" />
+								<img src={item.images[0].url} alt={"artistsPicture" + i} className="rounded-full sm:w-36 sm:h-36 shadow-lg shadow-black my-3" />
 							) : (
-								<img src={defaultArtist} alt={"artistsPicture" + i} className="bg-[#282828] rounded-full w-48 h-48 shadow-lg shadow-black my-3 p-5" />
+								<img src={defaultArtist} alt={"artistsPicture" + i} className="bg-[#282828] rounded-full sm:w-36 sm:h-36 shadow-lg shadow-black my-3 p-5" />
 							)}
 							<div className="absolute">
-								{artistHover === "artist" + i ? (
-									<img src={playBtnGreen} className="rounded-full w-14 h-14 shadow-lg shadow-black my-3 relative top-12 left-32 cursor-pointer" />
-								) : null}
+								<img
+									src={playBtnGreen}
+									className="rounded-full w-14 h-14 shadow-lg shadow-black my-3 relative top-16 left-12 cursor-pointer opacity-0 group-hover:opacity-100 group-hover:top-10 duration-300"
+								/>
 							</div>
-							<div className=" mx-3">
+							<div className="w-48 mx-3">
 								<p>{item.name}</p>
 								<p className="font-bold">Artista</p>
 							</div>
@@ -330,7 +391,32 @@ export default function CardsTracks({data, type}) {
 					))}
 				</div>
 			);
-		case "todo":
-			return <div>view</div>;
+		case "playlist":
+			return (
+				<div className="ml-52 mb-32 flex flex-row flex-wrap justify-evenly">
+					{playlistData.map((item, i) => (
+						<div
+							className="bg-[#181818] pb-3 hover:bg-zinc-800 ml-4 flex flex-col items-center justify-center text-white mt-5 duration-300 group"
+							onClick={() => handleSearchPlaylist({id: item.id, name: item.name, img: item.images[0], owner: item.owner})}
+						>
+							{item?.images[0]?.url ? (
+								<img src={item.images[0].url} alt={"artistsPicture" + i} className="rounded w-36 h-36 shadow-lg shadow-black my-3" />
+							) : (
+								<img src={defaultArtist} alt={"artistsPicture" + i} className="rounded bg-[#282828] w-36 h-36 shadow-lg shadow-black my-3" />
+							)}
+							<div className="absolute">
+								<img
+									src={playBtnGreen}
+									className="rounded-full w-14 h-14 shadow-lg shadow-black my-3 relative top-16 left-16 cursor-pointer opacity-0 group-hover:opacity-100 group-hover:top-12 duration-300"
+								/>
+							</div>
+							<div className="mx-3 w-48">
+								<p className="truncate">{item.name}</p>
+								<p className="font-bold">Artista</p>
+							</div>
+						</div>
+					))}
+				</div>
+			);
 	}
 }

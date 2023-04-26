@@ -1,3 +1,4 @@
+import "./style.css";
 import Logo from "../../assets/logo.png";
 import downloadCircle from "../../assets/downloadCircle.png";
 import homeIcon from "../../assets/home.png";

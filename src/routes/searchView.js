@@ -59,8 +59,8 @@ function SearchView() {
 			{searchValue === "" ? (
 				<NewReleases />
 			) : (
-				<div className="sm:pl-52 pt-28 text-white flex select-none">
-					<p className="p-3 bg-[#232323] hover:bg-[#2a2a2a] rounded-[20px] ml-10 invert option" onClick={(e) => handleSelectDataType({e, type: "todo"})}>
+				<div className="sm:pl-52 pt-5 sm:pt-28 text-white flex select-none">
+					<p className="p-3 bg-[#232323] hover:bg-[#2a2a2a] rounded-[20px] ml-3 sm:ml-10 invert option" onClick={(e) => handleSelectDataType({e, type: "todo"})}>
 						Todo
 					</p>
 					<p className="p-3 bg-[#232323] hover:bg-[#2a2a2a] rounded-[20px] ml-3 option" onClick={(e) => handleSelectDataType({e, type: "playlist"})}>

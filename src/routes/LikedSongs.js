@@ -59,7 +59,7 @@ function LikedSongs() {
 		<div className="min-h-screen min-w-screen bg-zinc-900">
 			<SideMenu />
 			<div className="absolute w-full flex flex-row bg-gradient-to-b sm:pl-52 from-[#513a9c] to-transparent h-[500px]">
-				<div className="flex items-center justify-center h-max pt-10 sm:pl-10 mx-auto w-max">
+				<div className="flex items-center justify-center h-max pt-10 sm:pl-10 mx-auto sm:mx-0 w-max">
 					<img src={heart} className="w-24 h-24 sm:w-48 sm:h-48 relative bg-gradient-to-br from-blue-900 to-white p-8 sm:p-16 shadow-lg shadow-black" />
 					<div className="ml-5">
 						<p className="text-slate-100 text-[0.8rem] sm:text-[.9rem] font-bold relative sm:top-4">PLAYLIST</p>

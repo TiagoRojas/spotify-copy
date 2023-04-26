@@ -32,13 +32,13 @@ function Album() {
 		<div className="min-w-screen min-h-screen bg-zinc-900">
 			<SideMenu />
 			<div
-				className="px-14 pt-5 pb-10 sm:ml-52 mb-5 drop-shadow-lg"
-				style={{background: `linear-gradient(170deg, ${createRandomString(6)} 0%, rgba(0,0,0,0) 100%)`}}
+				className="absolute w-full flex flex-row bg-gradient-to-b sm:pl-52 h-[700px]"
+				style={{background: `linear-gradient(180deg, ${createRandomString(6)} 0%, rgba(0,0,0,0) 100%)`}}
 			>
-				<img src={leftArrow} alt="left arrow" className="ml-5 sm:ml-0 w-8 h-7 invert" onClick={() => navigate(-1)} />
-				<div className="flex flex-row items-center">
-					<img src={results.data?.images[0].url} className="h-24 sm:h-72 sm:w-72 mr-5 mt-5 rounded" />
-					<div className="flex flex-col">
+				<img src={leftArrow} alt="left arrow" className="ml-5 sm:ml-0 w-8 h-7 invert z-10 relative top-10 left-10" onClick={() => navigate(-1)} />
+				<div className="flex flex-row relative top-16">
+					<img src={results.data?.images[0].url} className="h-48 sm:h-72 sm:w-72 mr-5 mt-5 rounded" />
+					<div className="flex flex-col pt-10">
 						<p className="text-white select-none">{results.data?.album_type === "single" ? "SENCILLO" : "ALBUM"}</p>
 						<p className="text-white text-[38px] sm:text-[48px] font-bold">{results.data?.name}</p>
 						<p className="text-white select-none">
@@ -49,7 +49,11 @@ function Album() {
 					</div>
 				</div>
 			</div>
-			<div>{results.data !== undefined ? <CardsTracks data={results.data.tracks.items} type="dataProps" /> : null}</div>
+			<div className="relative w-full h-full flex flex-col justify-center items-center mr-8 z-[1] sm:pt-8">
+				<div className="mt-72 sm:mt-96 bg-black/[0.3] w-full px-4 pt-5">
+					{results.data !== undefined ? <CardsTracks data={results.data.tracks.items} type="dataProps" /> : null}
+				</div>
+			</div>
 			<Player />
 		</div>
 	);
