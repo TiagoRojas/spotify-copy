@@ -9,15 +9,19 @@ import {NavLink, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {changeData, updateSearch, isBlank, changeCheckedIdPlaylist, updateTrackFavList, updateCheckedPlaylist} from "../../store/slice/spotifySlice";
 import {useLazyGetFavoriteTracksQuery} from "../../store/api/spotifyApi";
+import useMusic from "../../hooks/useMusic";
 
 function SideMenu() {
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
+	const {reset} = useMusic();
 	const playlist = useSelector((state) => state.data.userPlaylist);
 	const accessToken = useSelector((state) => state.data.code);
 	const [getFavoriteTracks] = useLazyGetFavoriteTracksQuery();
 	const handleOpenSpotifyWeb = () => {
 		window.open("https://www.spotify.com/download");
+	};
+	const resetPlayer = () => {
+		reset();
 	};
 	const handleMoveToLikedSongs = () => {
 		dispatch(updateTrackFavList({type: "reset"}));
@@ -105,5 +109,4 @@ function SideMenu() {
 		</>
 	);
 }
-// className="justify-self-end flex items-center mb-32"
 export default SideMenu;

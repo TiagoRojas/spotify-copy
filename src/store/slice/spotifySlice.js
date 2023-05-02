@@ -117,6 +117,10 @@ export const spotifySlice = createSlice({
 			state.timestamp = action.payload.timestamp;
 		},
 		changeMusic: (state, action) => {
+			if ((action.payload = undefined)) {
+				state.currentPlaying.audio = "";
+				state.currentPlaying.item = {};
+			}
 			state.currentPlaying.audio = action.payload.name;
 			state.currentPlaying.item = action.payload.item;
 		},

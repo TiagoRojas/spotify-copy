@@ -50,7 +50,7 @@ export default function Search() {
 		} else return;
 	}, [offset]);
 	return (
-		<div className="w-full flex flex-col lg:flex-row items-center ml-2 sm:ml-0">
+		<div className="w-full flex flex-col lg:flex-row items-center sm:ml-0">
 			<input
 				type="text"
 				onChange={(e) => handlerSearch(e)}

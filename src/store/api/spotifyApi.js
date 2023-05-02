@@ -92,7 +92,7 @@ export const {
 	useLazyGetTrackQuery,
 	useLazyGetAlbumQuery,
 	useLazyGetPlaylistQuery,
-	useCheckTrackExistQuery,
+	useLazyCheckTrackExistQuery,
 	useLazyAddTrackFavoriteQuery,
 	useLazyRemoveTrackFavoriteQuery,
 	useLazyGetFavoriteTracksQuery,

@@ -4,12 +4,10 @@ import CardsTracks from "../Components/Cards";
 import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
 import {useLazyGetFavoriteTracksQuery} from "../store/api/spotifyApi";
-import {updateCheckedPlaylist, updateTrackFavList} from "../store/slice/spotifySlice";
-import {handleScroll} from "../Components/complements";
+import {updateTrackFavList} from "../store/slice/spotifySlice";
 import {useNavigate} from "react-router-dom";
-import leftArrow from "../assets/leftArrow.png";
-import rightArrow from "../assets/rightArrow.png";
 import heart from "../assets/myLikesHeart.png";
+
 function LikedSongs() {
 	const token = useSelector((state) => state.data.code);
 	const dispatch = useDispatch();
@@ -34,17 +32,6 @@ function LikedSongs() {
 			navigate("/");
 		}
 	}, [token]);
-
-	const handleAddOrRes = ({type, amount}) => {
-		if (type === "res") {
-			if (offset >= 25) {
-				dispatch(updateCheckedPlaylist({checked: false}));
-			} else return;
-		} else {
-			// setOffset(offset + 25);
-			dispatch(updateCheckedPlaylist({checked: false}));
-		}
-	};
 
 	window.onscroll = function (ev) {
 		if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {

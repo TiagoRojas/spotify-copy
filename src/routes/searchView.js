@@ -44,12 +44,16 @@ function SearchView() {
 		<div>
 			<div>
 				<SideMenu />
-				<div className="sm:fixed flex flex-col sm:flex-row items-center justify-center pt-10 sm:pt-5 sm:pl-52 z-10 duration-200 w-full searchElement">
-					<div className="flex flex-row w-full">
-						<img src={logo} alt="Brand Logo" className="w-auto h-16 ml-5" />
+				<div className="sm:fixed flex flex-col sm:flex-row items-center justify-center pt-2 sm:pt-5 sm:pl-52 z-10 duration-200 w-full searchElement">
+					<div className="text-white flex flex-row items-center justify-end w-full p-5 inline sm:hidden">
+						<img src={userIcon} className="h-6 w-auto invert" />
+						<p>{userData.display_name}</p>
+					</div>
+					<div className="flex flex-row w-full px-3">
+						<img src={logo} alt="Brand Logo" className="w-auto h-16 ml-5 hidden sm:inline" />
 						<Search accessToken={code} userType={userData.product} />
 					</div>
-					<div className="text-white flex flex-row items-center justify-center w-[200px]">
+					<div className="text-white flex flex-row items-center justify-center w-[200px] hidden sm:inline">
 						<img src={userIcon} className="h-6 w-auto invert" />
 						<p>{userData.display_name}</p>
 					</div>
@@ -59,7 +63,7 @@ function SearchView() {
 			{searchValue === "" ? (
 				<NewReleases />
 			) : (
-				<div className="sm:pl-52 pt-5 sm:pt-28 text-white flex select-none">
+				<div className="sm:pl-52 pt-5 sm:pt-36 lg:pt-28 text-white flex select-none overflow-x-scroll dataTypeElement pr-5 sm:px-0">
 					<p className="p-3 bg-[#232323] hover:bg-[#2a2a2a] rounded-[20px] ml-3 sm:ml-10 invert option" onClick={(e) => handleSelectDataType({e, type: "todo"})}>
 						Todo
 					</p>

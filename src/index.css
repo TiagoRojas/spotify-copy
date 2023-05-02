@@ -20,6 +20,9 @@ code {
 	height: 5px;
 	width: 5px;
 }
+.dataTypeElement::-webkit-scrollbar {
+	display: none;
+}
 
 img {
 	-webkit-user-drag: none;
@@ -28,6 +31,7 @@ img {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

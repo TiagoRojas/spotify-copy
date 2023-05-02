@@ -3,6 +3,7 @@ import {isPlaying, timestamp, changeMusic} from "../store/slice/spotifySlice";
 import Swal from "sweetalert2";
 const useMusic = () => {
 	const dispatch = useDispatch();
+	const userData = useSelector((state) => state.data.userData);
 	let currentAudio = useSelector((state) => state.spotifyData.currentPlaying.audio);
 	let volume = useSelector((state) => state.spotifyData.volume);
 	const start = ({i, item, music}) => {
@@ -26,7 +27,7 @@ const useMusic = () => {
 			});
 			return;
 		}
-
+		document.title = item.musicName + " - Spotify";
 		dispatch(changeMusic({name: item.itemId, item}));
 		const audio = document.querySelector(`.audio${i}`);
 		const seeker = document.querySelector("#seeker");
@@ -37,6 +38,7 @@ const useMusic = () => {
 		audio.addEventListener("timeupdate", (e) => {
 			audio.onended = () => {
 				dispatch(isPlaying(false));
+				document.title = userData.display_name + " - Spotify";
 			};
 			seeker.oninput = () => {
 				audio.currentTime = seeker.value;
@@ -69,7 +71,10 @@ const useMusic = () => {
 			audio.play();
 		}
 	};
-	return {start, stop, pause, resume};
+	const reset = () => {
+		dispatch(changeMusic());
+	};
+	return {start, stop, pause, resume, reset};
 };
 
 export default useMusic;

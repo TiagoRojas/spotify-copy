@@ -4,6 +4,9 @@ import Search from "../Components/search";
 import Login from "../Components/Login";
 import banner1 from "../assets/banner2.png";
 import userIcon from "../assets/userIcon.png";
+import githubLogo from "../assets/github-logo.png";
+import linkedinLogo from "../assets/linkedin.png";
+import portfolioLogo from "../assets/portfolio.png";
 import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
 import {useDispatch, useSelector} from "react-redux";
@@ -101,23 +104,35 @@ function App() {
 					</div>
 					<Player />
 					<div className="sm:pl-52 w-full">
-						<div className="flex justify-center">
-							<img src={banner1} alt="banner of spotify" className="sm:pt-12" />
-						</div>
-						<div className="sm:ml:52">
+						<div className="sm:ml:52 sm:pt-5">
 							<p className="text-white text-[48px] font-bold pl-5">{welcomeMessage}</p>
 							<p className="text-white text-[20px] pl-5">
 								Este es un proyecto realizado con React y RTK Query para mi portfolio personal el cual pueden encontrar abajo
 							</p>
-							<div className="text-white flex flex-col ml-5">
-								<a href="" target="_blank" className="rainbow-text">
+							<div className="text-white flex flex-col lg:flex-row justify-evenly sm:items-center sm:ml-5 mx-5 mb-32">
+								<a
+									href=""
+									target="_blank"
+									className="bg-white text-black text-[30px] font-bold p-3 h-[400px] w-full md:w-[300px] overflow-hidden flex flex-col items-center rounded-xl mt-5 md:mt-0"
+								>
 									Link al repositorio
+									<img src={githubLogo} className="relative left-16 top-16 w-64 h-auto rotate-[25deg] mt-auto" />
 								</a>
-								<a href="" target="_blank">
-									Link a mi Portfolio
+								<a
+									href=""
+									target="_blank"
+									className="bg-white text-black text-[30px] font-bold p-3 h-[400px] w-full md:w-[300px] overflow-hidden flex flex-col items-center rounded-xl mt-5 md:mt-0"
+								>
+									<p className="relative z-10">Link a mi Portfolio</p>
+									<img src={portfolioLogo} className="relative left-16 bottom-20 w-64 h-auto rotate-[10deg] mt-auto" />
 								</a>
-								<a href="" target="_blank">
+								<a
+									href=""
+									target="_blank"
+									className="bg-white text-black text-[30px] font-bold p-3 h-[400px] w-full md:w-[300px] overflow-hidden flex flex-col items-center rounded-xl mt-5 md:mt-0"
+								>
 									Link a LinkedIn
+									<img src={linkedinLogo} className="relative right-10 top-5 w-44 h-auto rotate-[-40deg] mt-auto" />
 								</a>
 							</div>
 						</div>
