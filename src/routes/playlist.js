@@ -7,6 +7,8 @@ import {useLazyGetPlaylistQuery} from "../store/api/spotifyApi";
 import {useEffect} from "react";
 import {changeData} from "../store/slice/spotifySlice";
 import {DotWave} from "@uiball/loaders";
+import {useNavigate} from "react-router-dom";
+import leftArrow from "../assets/leftArrow.png";
 
 function Playlist() {
 	const code = useSelector((state) => state.data.code);
@@ -15,7 +17,7 @@ function Playlist() {
 	const playlistLength = useSelector((state) => state.spotifyData.data.userPlaylist.tracks.length);
 	const playlitsInfo = useSelector((state) => state.spotifyData.data.userPlaylist.playlistInfo);
 	const id = useSelector((state) => state.spotifyData.showingPlaylist.id);
-
+	const navigate = useNavigate();
 	useEffect(() => {
 		if (results.data === undefined) {
 			getPlaylist({token: code, id});
@@ -23,15 +25,21 @@ function Playlist() {
 			dispatch(changeData({data: results.data, image: results.data.images[0]?.url, type: "playlist"}));
 		}
 	}, [results.data]);
+	useEffect(() => {
+		if (code === "") {
+			navigate("/");
+		}
+	}, [code]);
 	return (
 		<div className="min-h-screen min-w-screen bg-zinc-900">
 			<SideMenu />
 			{playlistLength >= 1 ? (
 				<>
 					<div
-						className="absolute sm:pl-52 w-full text-white font-bold h-[500px] pl-12 z-[1]"
+						className="absolute sm:pl-52 w-full text-white font-bold h-[500px] pl-5 z-[1]"
 						style={{background: `linear-gradient(180deg, ${createRandomString(6)} 0%, rgba(0,0,0,0) 100%)`}}
 					>
+						<img src={leftArrow} alt="left arrow" className="sm:ml-0 w-8 h-7 invert z-10 relative top-14 sm:top-5 left-10" onClick={() => navigate(-1)} />
 						<div className="flex items-center h-[250px] sm:pl-5">
 							{playlitsInfo.img !== undefined ? <img src={playlitsInfo.img} className="w-24 h-24 sm:w-48 sm:h-48 shadow-lg shadow-black" /> : null}
 							<div className="items-center pl-2">
@@ -48,7 +56,7 @@ function Playlist() {
 							</div>
 						</div>
 					</div>
-					<div className="sm:pl-52 pt-52 sm:pt-64 relative z-10">
+					<div className="sm:pl-52 pt-52 sm:pt-72 relative z-10">
 						<div className=" pt-5 bg-black/[0.3]">
 							<Cards type="playlistView" />
 						</div>

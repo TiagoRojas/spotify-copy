@@ -10,14 +10,17 @@ import {useEffect} from "react";
 import {changeOffset} from "../store/slice/spotifySlice";
 import NewReleases from "../Components/newReleases/NewReleases";
 import {handleScroll} from "../Components/complements";
+import {useNavigate} from "react-router-dom";
 
 function SearchView() {
+	const navigate = useNavigate();
 	const code = useSelector((state) => state.data.code);
 	const userData = useSelector((state) => state.data.userData);
 	const [dataType, setDataType] = useState("todo");
 	const dispatch = useDispatch();
 	const offset = useSelector((state) => state.spotifyData.offset);
 	const searchValue = useSelector((state) => state.spotifyData.searchValue);
+	const tracks = useSelector((state) => state.spotifyData.data.tracks);
 	let timer;
 	function onlyOne(checkbox) {
 		var checkboxes = document.querySelectorAll(".option");
@@ -40,6 +43,11 @@ function SearchView() {
 	useEffect(() => {
 		window.addEventListener("scroll", () => handleScroll({currentMode: "online"}));
 	}, []);
+	useEffect(() => {
+		if (code === "") {
+			navigate("/");
+		}
+	}, [code]);
 	return (
 		<div>
 			<div>
@@ -60,7 +68,7 @@ function SearchView() {
 				</div>
 				<Player />
 			</div>
-			{searchValue === "" ? (
+			{tracks.length === 0 ? (
 				<NewReleases />
 			) : (
 				<div className="sm:pl-52 pt-5 sm:pt-36 lg:pt-28 text-white flex select-none overflow-x-scroll dataTypeElement pr-5 sm:px-0">

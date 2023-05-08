@@ -103,7 +103,7 @@ export default function Cards({data, type}) {
 										<div className="absolute">
 											<img
 												src={playBtnGreen}
-												className="rounded-full w-8 lg:w-12 lg:h-12 shadow-lg shadow-black my-3 relative opacity-0 top-10 lg:left-12 group-hover:opacity-100 group-hover:top-3 duration-300 cursor-pointer"
+												className="rounded-full w-8 lg:w-12 lg:h-12 shadow-lg shadow-black my-3 relative opacity-0 top-14 lg:left-12 group-hover:opacity-100 group-hover:top-10 duration-300 cursor-pointer"
 												onClick={() => handleSearchAlbum({id: item.id, name: item.name})}
 											/>
 										</div>
@@ -237,7 +237,6 @@ export default function Cards({data, type}) {
 						<img src={timeIcon} className="w-8 h-8 invert mr-6 justify-self-end" />
 					</div>
 					{data.map((item, i) => {
-						console.log(currentMode);
 						return (
 							<div
 								key={"dataProp" + i}
@@ -349,7 +348,7 @@ export default function Cards({data, type}) {
 									<p className="text-white text-sm text-center mr-5">{i + 1}</p>
 								)}
 							</div>
-							<div className="flex flex-row items-center truncate col-span-2">
+							<div className="flex flex-row items-center truncate">
 								<audio src={item.track.preview_url} className={`audio` + i} />
 								<img src={item.track.album.images[1].url} className="inline w-16 h-16 mr-2" />
 								<p className="text-white text-center truncate">{item.track.name}</p>

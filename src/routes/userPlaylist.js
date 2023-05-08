@@ -7,7 +7,7 @@ import SideMenu from "../Components/sideMenu";
 import {createRandomString} from "../Components/complements";
 
 function UserPlaylist() {
-	const accessToken = useSelector((state) => state.data.code);
+	const code = useSelector((state) => state.data.code);
 	const navigate = useNavigate();
 	const tracks = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
 	const playlistName = useSelector((state) => state.spotifyData.data.userPlaylist.playlistInfo.name);
@@ -15,10 +15,10 @@ function UserPlaylist() {
 	const playlistOwner = useSelector((state) => state.spotifyData.data.userPlaylist.playlistInfo.owner);
 	const playlistFollowers = useSelector((state) => state.spotifyData.data.userPlaylist.playlistInfo.followers);
 	useEffect(() => {
-		if (accessToken === "") {
+		if (code === "") {
 			navigate("/");
 		} else return;
-	}, [accessToken]);
+	}, [code]);
 	return (
 		<div className="min-h-screen min-w-screen bg-zinc-900">
 			<SideMenu />
