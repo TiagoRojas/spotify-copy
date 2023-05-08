@@ -1,4 +1,4 @@
-import CardsTracks from "../Components/Cards";
+import Cards from "../Components/Cards";
 import Search from "../Components/search";
 import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
@@ -81,7 +81,7 @@ function SearchView() {
 					</p>
 				</div>
 			)}
-			{searchValue === "" ? null : <CardsTracks type={dataType} />}
+			{searchValue === "" ? null : <Cards type={dataType} />}
 		</div>
 	);
 }

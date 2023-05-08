@@ -1,47 +1,38 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {millisToMinutesAndSeconds} from "./complements";
-import PlayPreview from "./playPreview";
 import heart from "../assets/heart.png";
 import heartFilled from "../assets/heartFilled.png";
 import playBtnGreen from "../assets/playBtnGreen.png";
 import defaultArtist from "../assets/defaultArtist.png";
 import timeIcon from "../assets/timeIcon.png";
-
-import {
-	useLazyAddTrackFavoriteQuery,
-	useLazyCheckTrackExistQuery,
-	useLazyGetAlbumQuery,
-	useLazyGetPlaylistQuery,
-	useLazyRemoveTrackFavoriteQuery
-} from "../store/api/spotifyApi";
+import {useLazyAddTrackFavoriteQuery, useLazyCheckTrackExistQuery, useLazyRemoveTrackFavoriteQuery} from "../store/api/spotifyApi";
 import {useDispatch, useSelector} from "react-redux";
-import {changeData, changeOffset, changeShowingAlbum, updateShowingPlaylist} from "../store/slice/spotifySlice";
+import {changeOffset, changeShowingAlbum, updateShowingPlaylist} from "../store/slice/spotifySlice";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import useMusic from "../hooks/useMusic";
 import playButton from "../assets/playButton.png";
 import CheckComponent from "./checkComponent";
-export default function CardsTracks({data, type}) {
+
+export default function Cards({data, type}) {
 	const navigate = useNavigate();
 	const code = useSelector((state) => state.data.code);
 	const [removeTrackFavorite, resultsRemove] = useLazyRemoveTrackFavoriteQuery();
 	const [addTrackFavorite, resultsAdd] = useLazyAddTrackFavoriteQuery();
-	const [checkTrackExist, resultsCheck] = useLazyCheckTrackExistQuery();
 	const dispatch = useDispatch();
-	const {start, pause, resume, stop} = useMusic();
+	const {start, stop} = useMusic();
 	const tracksData = useSelector((state) => state.spotifyData.data.tracks);
 	const playlistData = useSelector((state) => state.spotifyData.data.playlists);
 	const albumData = useSelector((state) => state.spotifyData.data.albums);
 	const artistData = useSelector((state) => state.spotifyData.data.artists);
 	const likedSongsData = useSelector((state) => state.spotifyData.trackFavList);
 	const newReleasesData = useSelector((state) => state.spotifyData.data.newReleases);
-	// const userPlaylistTrack = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
 	const userPlaylist = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
+	const currentMode = useSelector((state) => state.spotifyData.mode);
+
 	const [currentHover, setCurrentHover] = useState("");
-	const [albumHover, setAlbumHover] = useState("");
 	const [currentPlaying, setCurrentPlaying] = useState("none");
-	const [artistHover, setArtistHover] = useState("");
-	const [checkedIdList, setCheckedIdList] = useState(true);
+
 	let idList = [];
 	const addRemoveFav = ({id, i}) => {
 		let heartElement = document.querySelector(".heart" + i);
@@ -59,16 +50,6 @@ export default function CardsTracks({data, type}) {
 			heartElement.src = heartFilled;
 		} else heartElement.src = heart;
 	}
-
-	const offset = useSelector((state) => state.spotifyData.offset);
-	const offsetSubtract = () => {
-		if (offset >= 10) {
-			dispatch(changeOffset(-10));
-		} else return;
-	};
-	const offsetAdd = () => {
-		dispatch(changeOffset(10));
-	};
 	useEffect(() => {
 		if (code === "") {
 			navigate("/");
@@ -144,13 +125,17 @@ export default function CardsTracks({data, type}) {
 									<div className="absolute flex items-center justify-center">
 										<img
 											src={playButton}
-											className="invert w-6 sm:w-6 h-auto my-3 relative left-7 sm:left-3 cursor-pointer opacity-0 top-5 group-hover:opacity-100 group-hover:top-0 duration-300"
-											onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, img: item.album.images[0].url})}
+											className="select-none invert w-6 sm:w-6 h-auto my-3 relative left-7 sm:left-3 cursor-pointer opacity-0 top-5 group-hover:opacity-100 group-hover:top-0 duration-300"
+											onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, img: item.album.images[0].url, music: item.preview_url})}
 										/>
 									</div>
-									<div className="w-64 ml-3">
-										<p className="truncate w-full">{item.name}</p>
-										<p className="text-gray-500 truncate text-[12px] text-start">{item.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
+									<div className="w-[32rem] ml-2 truncate">
+										<p className="truncate" title={item.name}>
+											{item.name}
+										</p>
+										<p className="text-gray-500 truncate text-[12px] text-start select-none">
+											{item.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}
+										</p>
 									</div>
 									<div className="w-full flex items-center justify-items-end justify-end">
 										<img
@@ -184,7 +169,6 @@ export default function CardsTracks({data, type}) {
 												className="bg-[#282828] rounded-full w-24 h-24 sm:w-36 sm:h-36 shadow-lg shadow-black my-3 p-5 mx-auto"
 											/>
 										)}
-
 										<p className="w-full truncate">{item.name}</p>
 									</div>
 								);
@@ -245,18 +229,19 @@ export default function CardsTracks({data, type}) {
 			);
 		case "dataProps":
 			return (
-				<div className="pb-32 sm:ml-52 px-5 justify-center">
-					<div className="grid grid-cols-[2rem,10rem,2fr] grid-flow-col w-full text-white px-4 py-1 border-b border-neutral-500">
+				<div className="sm:ml-52 mb-24 pb-4 sm:pb-0 sm:mb-32 lg:px-12 px-2 flex flex-row min-w-screen flex-wrap">
+					<div className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-2 sm:px-5 mx-auto">
 						<p>#</p>
 						<p>TITULO</p>
-						<p className="col-span-2 justify-self-center pr-8 ">AUTORES</p>
-						<img src={timeIcon} className="w-8 h-8 invert mr-8 justify-self-end" />
+						<p className="col-span-2 pr-8 hidden sm:inline">ALBUM</p>
+						<img src={timeIcon} className="w-8 h-8 invert mr-6 justify-self-end" />
 					</div>
 					{data.map((item, i) => {
+						console.log(currentMode);
 						return (
 							<div
 								key={"dataProp" + i}
-								className="grid grid-cols-[2rem,10rem,2fr] grid-flow-col items-center p-3 rounded text-lg hover:bg-zinc-700 h-20 cursor-default group"
+								className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col items-center sm:p-3 px-2 rounded text-lg hover:bg-zinc-700 h-20 sm:h-auto cursor-default group w-full"
 								onMouseEnter={() => setCurrentHover("item" + i)}
 								onMouseLeave={() => setCurrentHover("")}
 							>
@@ -264,21 +249,29 @@ export default function CardsTracks({data, type}) {
 									<img
 										src={playButton}
 										className="h-5 w-5 invert mr-4 mb-1 hidden group-hover:inline"
-										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, music: item.preview_url})}
+										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, music: item.preview_url, img: item?.cover})}
 									/>
 									<p className="text-white text-sm mr-5 group-hover:hidden">{i + 1}</p>
 								</div>
-								<audio src={item.preview_url} className={`audio` + i} />
-								<p className="text-white justify-self-start w-max">{item.name}</p>
-								<div className="text-white flex flex-row w-full justify-evenly select-none">
+								<div className="flex items-center w-full col-span-2 sm:col-span-1">
+									<audio src={item.preview_url} className={`audio` + i} />
+									{item.cover ? <img src={item.cover} className="inline w-16 h-16 mr-2" /> : null}
+									<p className="text-white justify-self-start">{item.name}</p>
+								</div>
+								<p className="text-white text-start w-32 hidden sm:inline">
 									{item.artists.map((artist, artistsIndex) => (artistsIndex >= 1 ? ", " + artist.name : artist.name))}
-								</div>
-								<div className="justify-end flex flex-row w-10 justify-self-end ">
-									{currentHover === "item" + i ? (
-										<img src={heart} alt="heart" className={"w-8 h-auto cursor-pointer heart" + i} onClick={() => addRemoveFav({id: item.id, i})} />
-									) : null}
-								</div>
-								<div className="px-8 justify-start">
+								</p>
+								{currentMode !== "offline" ? (
+									<div className="justify-end flex flex-row w-10 justify-self-end ">
+										<img
+											src={heart}
+											alt="heart"
+											className={"w-8 h-auto cursor-pointer hidden group-hover:inline heart" + i}
+											onClick={() => addRemoveFav({id: item.id, i})}
+										/>
+									</div>
+								) : null}
+								<div className="sm:px-8 justify-start mr-6 sm:mr-0">
 									<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.duration_ms)}</p>
 								</div>
 							</div>
@@ -292,13 +285,13 @@ export default function CardsTracks({data, type}) {
 					<div className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500">
 						<p>#</p>
 						<p>TITULO</p>
-						<p className="col-span-2 pr-8 hidden sm:block">ALBUM</p>
+						<p className="col-span-2 pr-8 hidden md:block">ALBUM</p>
 						<img src={timeIcon} className="w-8 h-8 invert mr-8 justify-self-end" />
 					</div>
 					{likedSongsData.map((item, i) => (
 						<div
 							key={"likedSong" + i}
-							className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full sm:my-5 my-2 items-center hover:bg-black/[0.4] py-8 rounded-lg sm:py-0"
+							className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full my-3 md:my-2 items-center hover:bg-black/[0.4] p-3 md:p-2 rounded-lg"
 							onMouseEnter={() => setCurrentHover("item" + i)}
 							onMouseLeave={() => setCurrentHover("")}
 						>
@@ -315,10 +308,10 @@ export default function CardsTracks({data, type}) {
 							</div>
 							<div className="flex flex-row items-center truncate">
 								<audio src={item.track.preview_url} className={`audio` + i} />
-								<img src={item.track.album.images[1].url} className="w-16 h-16 mr-2 hidden sm:block" />
+								<img src={item.track.album.images[1].url} className="w-16 h-16 mr-2 inline" />
 								<p className="text-white text-center truncate">{item.track.name}</p>
 							</div>
-							<p className="text-white text-start w-32 hidden sm:block">{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
+							<p className="text-white text-start w-32 hidden md:block">{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
 							<div className="px-8 flex flex-row justify-self-end">
 								<img src={heartFilled} alt="heart" className={"w-6 h-5 cursor-pointer mr-10 heart" + i} onClick={() => addRemoveFav({id: item.track.id, i})} />
 								<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.track.duration_ms)}</p>
@@ -333,7 +326,7 @@ export default function CardsTracks({data, type}) {
 					<div className="grid sm:grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-4">
 						<p>#</p>
 						<p>TITULO</p>
-						<p className="col-span-2 pr-8 hidden sm:inline">ARTISTS</p>
+						<p className="col-span-2 pr-8 hidden md:inline">ARTISTS</p>
 						<img src={timeIcon} className="w-8 h-8 invert mr-8 justify-self-end" />
 					</div>
 					{userPlaylist.map((item, i) => (
@@ -358,10 +351,10 @@ export default function CardsTracks({data, type}) {
 							</div>
 							<div className="flex flex-row items-center truncate col-span-2">
 								<audio src={item.track.preview_url} className={`audio` + i} />
-								<img src={item.track.album.images[1].url} className="hidden sm:inline w-16 h-16 mr-2" />
+								<img src={item.track.album.images[1].url} className="inline w-16 h-16 mr-2" />
 								<p className="text-white text-center truncate">{item.track.name}</p>
 							</div>
-							<p className="text-white text-start sm:w-32 hidden sm:inline">{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
+							<p className="text-white text-start sm:w-32 hidden md:inline">{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
 							<div className="px-8 flex flex-row justify-self-end">
 								<img src={heart} alt="heart" className={"w-5 h-5 sm:w-8 sm:h-8 cursor-pointer mr-10 heart" + i} onClick={() => addRemoveFav({id: item.track.id, i})} />
 								<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.track.duration_ms)}</p>

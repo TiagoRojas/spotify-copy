@@ -13,19 +13,26 @@ import useMusic from "../../hooks/useMusic";
 
 function SideMenu() {
 	const dispatch = useDispatch();
-	const {reset} = useMusic();
+	const {reset, pause} = useMusic();
 	const playlist = useSelector((state) => state.data.userPlaylist);
 	const accessToken = useSelector((state) => state.data.code);
+	const currentMode = useSelector((state) => state.spotifyData.mode);
+
 	const [getFavoriteTracks] = useLazyGetFavoriteTracksQuery();
 	const handleOpenSpotifyWeb = () => {
 		window.open("https://www.spotify.com/download");
 	};
-	const resetPlayer = () => {
-		reset();
+
+	const handleMoveHome = () => {
+		pause();
+		setTimeout(() => {
+			reset();
+		}, 250);
 	};
 	const handleMoveToLikedSongs = () => {
 		dispatch(updateTrackFavList({type: "reset"}));
 		getFavoriteTracks({token: accessToken, offset: 0});
+		reset();
 	};
 	const handlePlaylistRequest = ({id, image, name, playlist}) => {
 		dispatch(changeCheckedIdPlaylist(id));
@@ -38,6 +45,7 @@ function SideMenu() {
 		})
 			.then((res) => res.json())
 			.then((data) => {
+				reset();
 				dispatch(changeData({data: data, type: "playlist", loaded: true, name, image}));
 			});
 	};
@@ -56,30 +64,36 @@ function SideMenu() {
 				<img src={Logo} className="h-auto w-48 mx-auto mt-3" alt="Spotify Logo" />
 				<div className="mx-2">
 					<div className="border-b pb-2">
-						<NavLink to={"/"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-150" : "")}>
-							<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
-								<img src={homeIcon} className="w-5 h-5 mr-1 invert" />
-								Inicio
-							</div>
-						</NavLink>
-						<NavLink to={"/search"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-200" : "")}>
-							<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
-								<img src={searchIcon} className="w-5 h-5 mr-1 invert" />
-								Buscar
-							</div>
-						</NavLink>
-						<NavLink
-							to={"/mylikes"}
-							className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-200" : "")}
-							onClick={() => handleMoveToLikedSongs()}
-						>
-							<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl">
-								<div className="flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-400 to-gray-100 w-6 h-6 rounded mr-1">
-									<img src={heart} className="w-3 h-3" />
-								</div>
-								<p className="duration-200 brightness-50 hover:brightness-150">Tus me gusta</p>
-							</div>
-						</NavLink>
+						{currentMode === "online" ? (
+							<>
+								<NavLink to={"/"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-150" : "")} onClick={() => handleMoveHome()}>
+									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
+										<img src={homeIcon} className="w-5 h-5 mr-1 invert" />
+										Inicio
+									</div>
+								</NavLink>
+								<NavLink to={"/search"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-200" : "")}>
+									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
+										<img src={searchIcon} className="w-5 h-5 mr-1 invert" />
+										Buscar
+									</div>
+								</NavLink>
+								<NavLink
+									to={"/mylikes"}
+									className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-200" : "")}
+									onClick={() => handleMoveToLikedSongs()}
+								>
+									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl">
+										<div className="flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-400 to-gray-100 w-6 h-6 rounded mr-1">
+											<img src={heart} className="w-3 h-3" />
+										</div>
+										<p className="duration-200 brightness-50 hover:brightness-150">Tus me gusta</p>
+									</div>
+								</NavLink>
+							</>
+						) : (
+							<p className="mt-6 select-none">Estas en el modo Offline!</p>
+						)}
 					</div>
 					<div className="px-2 py-3 rounded-xl h-full max-h-screen">
 						{playlist !== []

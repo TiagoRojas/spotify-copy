@@ -1,9 +1,16 @@
-import {useLocation} from "react-router-dom";
-
 export function millisToMinutesAndSeconds(millis) {
 	let minutes = Math.floor(millis / 60000);
 	let seconds = ((millis % 60000) / 1000).toFixed(0);
 	return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+}
+export function formatSecondsAsTime(secs) {
+	let hr = Math.floor(secs / 3600);
+	let min = Math.floor((secs - hr * 3600) / 60);
+	let sec = Math.floor(secs - hr * 3600 - min * 60);
+	if (sec < 10) {
+		sec = "0" + sec;
+	}
+	return min + ":" + sec;
 }
 export function handleScroll({currentMode}) {
 	if (currentMode === "online") {

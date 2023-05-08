@@ -5,9 +5,12 @@ const useMusic = () => {
 	const dispatch = useDispatch();
 	const userData = useSelector((state) => state.data.userData);
 	let currentAudio = useSelector((state) => state.spotifyData.currentPlaying.audio);
+	let currentMusicName = useSelector((state) => state.spotifyData.currentPlaying.item.musicName);
 	let volume = useSelector((state) => state.spotifyData.volume);
+	const seeker = document.querySelector("#seeker");
 	const start = ({i, item, music}) => {
-		if (music === null) {
+		console.log(music);
+		if (music === null || music === undefined) {
 			const Toast = Swal.mixin({
 				toast: true,
 				position: "top-right",
@@ -30,7 +33,6 @@ const useMusic = () => {
 		document.title = item.musicName + " - Spotify";
 		dispatch(changeMusic({name: item.itemId, item}));
 		const audio = document.querySelector(`.audio${i}`);
-		const seeker = document.querySelector("#seeker");
 		audio.currentTime = 0;
 		audio.volume = volume;
 		dispatch(isPlaying(true));
@@ -55,6 +57,7 @@ const useMusic = () => {
 	};
 	const pause = (audioPlaying) => {
 		if (audioPlaying !== undefined) {
+			document.title = userData.display_name + " - Spotify";
 			const audio = document.querySelector("." + audioPlaying);
 			audio.pause();
 			dispatch(timestamp({timestamp: audio.currentTime, audio: audioPlaying}));
@@ -62,17 +65,29 @@ const useMusic = () => {
 		}
 	};
 	const resume = () => {
+		console.log(currentMusicName);
 		if (currentAudio !== undefined) {
 			let audio = document.querySelector("." + currentAudio);
 			audio.volume = volume;
-			console.log(volume);
+			document.title = currentMusicName + " - Spotify";
 			dispatch(timestamp({timestamp: audio.currentTime, audio: currentAudio}));
 			dispatch(isPlaying(true));
 			audio.play();
+			audio.addEventListener("timeupdate", (e) => {
+				audio.onended = () => {
+					dispatch(isPlaying(false));
+					document.title = userData.display_name + " - Spotify";
+				};
+				seeker.oninput = () => {
+					audio.currentTime = seeker.value;
+				};
+				seeker.value = audio.currentTime;
+			});
 		}
 	};
 	const reset = () => {
 		dispatch(changeMusic());
+		dispatch(isPlaying(false));
 	};
 	return {start, stop, pause, resume, reset};
 };

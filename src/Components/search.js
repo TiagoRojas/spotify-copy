@@ -4,10 +4,12 @@ import {changeData, isBlank, isPlaying, timestamp, updateSearch} from "../store/
 import {useLazyGetTrackQuery} from "../store/api/spotifyApi";
 import {createSearchParams, useNavigate} from "react-router-dom";
 import {handleScroll} from "./complements";
+import useMusic from "../hooks/useMusic";
 export default function Search() {
 	const [getTrack, results] = useLazyGetTrackQuery();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const {reset} = useMusic();
 	const token = useSelector((state) => state.data.code);
 	const searchValue = useSelector((state) => state.spotifyData.searchValue);
 	const offset = useSelector((state) => state.spotifyData.offset);
@@ -15,6 +17,7 @@ export default function Search() {
 	const handlerSearch = (e) => {
 		clearTimeout(timer);
 		timer = setTimeout(async () => {
+			reset();
 			if (e.target.value !== "") {
 				dispatch(changeData({type: "reset"}));
 				navigate({

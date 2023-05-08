@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import CardsTracks from "../Components/Cards";
+import Cards from "../Components/Cards";
 import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
 import {useLazyGetFavoriteTracksQuery} from "../store/api/spotifyApi";
 import {updateTrackFavList} from "../store/slice/spotifySlice";
 import {useNavigate} from "react-router-dom";
 import heart from "../assets/myLikesHeart.png";
+import {DotWave} from "@uiball/loaders";
 
 function LikedSongs() {
 	const token = useSelector((state) => state.data.code);
@@ -17,13 +18,13 @@ function LikedSongs() {
 	const tracks = useSelector((state) => state.spotifyData.trackFavList);
 	const userData = useSelector((state) => state.data.userData);
 	let timer;
-
+	const [loaded, setLoaded] = useState(false);
 	useEffect(() => {
-		console.log(results.data);
-		if (results.data !== undefined) {
+		if (!results.isFetching && results.isSuccess) {
 			dispatch(updateTrackFavList({data: results.data.items, type: "add"}));
-		}
-	}, [results.data]);
+			setLoaded(true);
+		} else setLoaded(false);
+	}, [results]);
 	useEffect(() => {
 		getFavoriteTracks({token, offset});
 	}, [offset]);
@@ -32,12 +33,10 @@ function LikedSongs() {
 			navigate("/");
 		}
 	}, [token]);
-
 	window.onscroll = function (ev) {
 		if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
 			clearTimeout(timer);
 			timer = setTimeout(() => {
-				console.log("offset changed");
 				setOffset(offset + 25);
 			}, 200);
 		}
@@ -57,17 +56,18 @@ function LikedSongs() {
 					</div>
 				</div>
 			</div>
-			{results.data === undefined ? null : (
+			{tracks.length <= 1 ? (
+				<div className="w-full h-screen flex justify-center items-center">
+					<DotWave size={47} speed={1} color="white" />
+				</div>
+			) : (
 				<div className="relative w-full h-full flex flex-col justify-center items-center mr-8 z-[1] sm:pt-8">
-					<div className="mt-40 sm:mt-64 bg-black/[0.3] w-full sm:pl-56 px-4 pt-5">
-						<CardsTracks token={token} type="likedSongs" />
+					<div className="mt-40 sm:mt-64 bg-black/[0.3] w-full sm:pl-56 sm:px-4 px-2 pt-5">
+						<Cards token={token} type="likedSongs" />
 					</div>
 				</div>
 			)}
 			<Player />
-			<div className="sm:pl-56 text-white pb-32 text-center bg-black/[0.3]">
-				<p className="p-5 text-[0.8rem]">Esto simplemente es un projecto para mi portafolio personal.</p>
-			</div>
 		</div>
 	);
 }

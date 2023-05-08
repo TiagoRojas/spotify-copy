@@ -1,8 +1,5 @@
 import {useEffect, useState} from "react";
-import CardsTracks from "../Components/Cards";
-import Search from "../Components/search";
 import Login from "../Components/Login";
-import banner1 from "../assets/banner2.png";
 import userIcon from "../assets/userIcon.png";
 import githubLogo from "../assets/github-logo.png";
 import linkedinLogo from "../assets/linkedin.png";
@@ -11,10 +8,11 @@ import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
 import {useDispatch, useSelector} from "react-redux";
 import {changeCode, updatePlaylist, updateUserData} from "../store/slice/dataSlice";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {changeMode} from "../store/slice/spotifySlice";
 import OfflineModeView from "./offlineMode";
 import {handleScroll} from "../Components/complements";
+import spotifyBanner from "../assets/banner.png";
 
 function App() {
 	const dispatch = useDispatch();
@@ -85,7 +83,7 @@ function App() {
 		if (hours >= 12) {
 			setWelcomeMessage("Buenas tardes!");
 		}
-		if (hours >= 19) {
+		if (hours >= 19 || hours < 7) {
 			setWelcomeMessage("Buenas noches!");
 		}
 	}, []);
@@ -105,34 +103,45 @@ function App() {
 					<Player />
 					<div className="sm:pl-52 w-full">
 						<div className="sm:ml:52 sm:pt-5">
+							<div className="lg:w-[800px] xl:w-[1000px] w-screen h-[150px] md:h-[200px] mx-auto">
+								<img src={spotifyBanner} className="w-full h-full object-cover" />
+							</div>
 							<p className="text-white text-[48px] font-bold pl-5">{welcomeMessage}</p>
 							<p className="text-white text-[20px] pl-5">
-								Este es un proyecto realizado con React y RTK Query para mi portfolio personal el cual pueden encontrar abajo
+								Este es un proyecto realizado para mi portfolio personal, el cual utiliza:
+								<ul className="pl-5 text-white list-disc">
+									<li>React</li>
+									<li>Redux Toolkit</li>
+									<li>React Query</li>
+									<li>Sweetalert2</li>
+									<li>Spotify API</li>
+									<li>Tailwind CSS</li>
+								</ul>
 							</p>
-							<div className="text-white flex flex-col lg:flex-row justify-evenly sm:items-center sm:ml-5 mx-5 mb-32">
+							<div className="text-white flex flex-col lg:flex-row sm:items-center sm:ml-5 mx-5 mb-32 pt-12 pl-12">
 								<a
 									href=""
 									target="_blank"
-									className="bg-white text-black text-[30px] font-bold p-3 h-[400px] w-full md:w-[300px] overflow-hidden flex flex-col items-center rounded-xl mt-5 md:mt-0"
+									className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
 								>
-									Link al repositorio
-									<img src={githubLogo} className="relative left-16 top-16 w-64 h-auto rotate-[25deg] mt-auto" />
+									<img src={githubLogo} className="bg-white w-32 h-auto p-2" />
+									<p className="text-white text-[24px] ml-1">Link al repositorio</p>
 								</a>
 								<a
 									href=""
 									target="_blank"
-									className="bg-white text-black text-[30px] font-bold p-3 h-[400px] w-full md:w-[300px] overflow-hidden flex flex-col items-center rounded-xl mt-5 md:mt-0"
+									className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
 								>
-									<p className="relative z-10">Link a mi Portfolio</p>
-									<img src={portfolioLogo} className="relative left-16 bottom-20 w-64 h-auto rotate-[10deg] mt-auto" />
+									<img src={portfolioLogo} className="bg-white w-32 h-auto p-2" />
+									<p className="text-white text-[24px] ml-1">Link a mi Portfolio</p>
 								</a>
 								<a
 									href=""
 									target="_blank"
-									className="bg-white text-black text-[30px] font-bold p-3 h-[400px] w-full md:w-[300px] overflow-hidden flex flex-col items-center rounded-xl mt-5 md:mt-0"
+									className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
 								>
-									Link a LinkedIn
-									<img src={linkedinLogo} className="relative right-10 top-5 w-44 h-auto rotate-[-40deg] mt-auto" />
+									<img src={linkedinLogo} className="bg-white w-32 h-auto p-2" />
+									<p className="text-white text-[24px] ml-1">Link a LinkedIn</p>
 								</a>
 							</div>
 						</div>

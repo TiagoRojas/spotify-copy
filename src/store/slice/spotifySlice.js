@@ -35,11 +35,7 @@ const initialState = {
 	timestamp: 0,
 	currentPlaying: {
 		audio: "",
-		item: {
-			name: "",
-			image: "",
-			autors: ""
-		}
+		item: {}
 	},
 	isLooping: false,
 	volume: 0.1,
@@ -62,7 +58,6 @@ export const spotifySlice = createSlice({
 				state.data.albums = [...state.data.albums, ...action.payload.data.albums.items];
 			}
 			if (action.payload.type === "playlist") {
-				console.log(action.payload);
 				state.data.userPlaylist.playlistInfo.owner = action.payload.data.owner.display_name;
 				state.data.userPlaylist.playlistInfo.followers = action.payload.data.followers.total;
 				state.data.userPlaylist.tracks = action.payload.data.tracks.items;
@@ -117,12 +112,13 @@ export const spotifySlice = createSlice({
 			state.timestamp = action.payload.timestamp;
 		},
 		changeMusic: (state, action) => {
-			if ((action.payload = undefined)) {
+			if (action.payload == undefined) {
 				state.currentPlaying.audio = "";
 				state.currentPlaying.item = {};
+			} else {
+				state.currentPlaying.audio = action.payload.name;
+				state.currentPlaying.item = action.payload.item;
 			}
-			state.currentPlaying.audio = action.payload.name;
-			state.currentPlaying.item = action.payload.item;
 		},
 		changeLoop: (state, action) => {
 			state.isLooping = action.payload;
@@ -140,13 +136,12 @@ export const spotifySlice = createSlice({
 			state.currentId = action.payload;
 		},
 		updateTrackFavList: (state, action) => {
-			console.log(action.payload);
 			if (action.payload.type === "reset") {
 				state.trackFavList = [];
 			}
 			if (action.payload.type === "add") {
 				state.trackFavList = [...state.trackFavList, ...action.payload.data];
-			} else return;
+			}
 		}
 	}
 });
