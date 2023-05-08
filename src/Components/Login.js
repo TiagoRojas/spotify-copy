@@ -17,10 +17,10 @@ export default function Login() {
 	return (
 		<div className="flex flex-col justify-center items-center h-screen bg-zinc-900 select-none">
 			<a href={AUTH_URL} className="bg-green-700 p-7 rounded-full text-white font-bold text-xl">
-				Login with Spotify
+				Iniciar sesión con Spotify
 			</a>
 			<p className="text-white mt-5" onClick={() => handleOfflineMode()}>
-				Offline Mode {"(limited)"}
+				Modo sin conexión
 			</p>
 		</div>
 	);

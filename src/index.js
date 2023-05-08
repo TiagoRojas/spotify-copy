@@ -12,6 +12,7 @@ import {Provider} from "react-redux";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Album from "./routes/album";
 import Playlist from "./routes/playlist";
+import OnlineMode from "./routes/onlineMode";
 
 const router = createBrowserRouter([
 	{
