@@ -49,6 +49,7 @@ function App() {
 					})
 						.then((response) => response.json())
 						.then((userData) => {
+							console.log(userData);
 							dispatch(updateUserData(userData));
 							document.title = userData.display_name + " - Spotify";
 						});
