@@ -17,6 +17,7 @@ function SideMenu() {
 	const {reset, pause} = useMusic();
 	const playlist = useSelector((state) => state.data.userPlaylist);
 	const accessToken = useSelector((state) => state.data.code);
+	const userData = useSelector((state) => state.data.userData);
 	const currentMode = useSelector((state) => state.spotifyData.mode);
 
 	const [getFavoriteTracks] = useLazyGetFavoriteTracksQuery();
@@ -25,15 +26,18 @@ function SideMenu() {
 	};
 
 	const handleReset = () => {
+		document.title = userData.display_name + " - Spotify";
 		pause();
 		reset();
 	};
 	const handleMoveToLikedSongs = () => {
+		document.title = userData.display_name + " - Spotify";
 		dispatch(updateTrackFavList({type: "reset"}));
 		getFavoriteTracks({token: accessToken, offset: 0});
 		reset();
 	};
 	const handlePlaylistRequest = ({id, image, name}) => {
+		document.title = userData.display_name + " - Spotify";
 		const color = generateRandomGradient();
 		dispatch(changeColor(color));
 		dispatch(changeData({type: "reset"}));
