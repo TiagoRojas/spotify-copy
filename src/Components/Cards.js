@@ -17,6 +17,7 @@ import CheckComponent from "./checkComponent";
 export default function Cards({data, type}) {
 	const navigate = useNavigate();
 	const code = useSelector((state) => state.data.code);
+	const mode = useSelector((state) => state.spotifyData.mode);
 	const [removeTrackFavorite, resultsRemove] = useLazyRemoveTrackFavoriteQuery();
 	const [addTrackFavorite, resultsAdd] = useLazyAddTrackFavoriteQuery();
 	const dispatch = useDispatch();
@@ -193,7 +194,9 @@ export default function Cards({data, type}) {
 									<div className="flex flex-row text-gray-400 text-sm text-center text-m flex items-center">
 										{item.release_date.slice(0, 4)}
 										<p className="font-bold text-xl text mx-1">&middot;</p>
-										{item.artists.map((item, index) => (index >= 1 ? ", " + item.name : item.name))}
+										<p className="truncate" title={item.artists.map((item, index) => (index >= 1 ? " " + item.name : item.name))}>
+											{item.artists.map((item, index) => (index >= 1 ? ", " + item.name : item.name))}
+										</p>
 									</div>
 								</div>
 							</div>
@@ -230,17 +233,18 @@ export default function Cards({data, type}) {
 		case "dataProps":
 			return (
 				<div className="sm:ml-52 mb-24 pb-4 sm:pb-0 sm:mb-32 lg:px-12 px-2 flex flex-row min-w-screen flex-wrap">
-					<div className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-2 sm:px-5 mx-auto">
+					<div className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-2 sm:px-5 mx-auto items-center">
 						<p>#</p>
 						<p>TITULO</p>
 						<p className="col-span-2 pr-8 hidden sm:inline">ALBUM</p>
 						<img src={timeIcon} className="w-8 h-8 invert mr-6 justify-self-end" />
 					</div>
 					{data.map((item, i) => {
+						idList = [...idList, item.id];
 						return (
 							<div
 								key={"dataProp" + i}
-								className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col items-center sm:p-3 px-2 rounded text-lg hover:bg-zinc-700 h-20 sm:h-auto cursor-default group w-full"
+								className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col items-center sm:p-3 px-2 rounded text-lg hover:bg-[#2a2a2a]/[.5] h-20 sm:h-auto cursor-default group w-full"
 								onMouseEnter={() => setCurrentHover("item" + i)}
 								onMouseLeave={() => setCurrentHover("")}
 							>
@@ -253,6 +257,7 @@ export default function Cards({data, type}) {
 									<p className="text-white text-sm mr-5 group-hover:hidden">{i + 1}</p>
 								</div>
 								<div className="flex items-center w-full col-span-2 sm:col-span-1">
+									{i >= data.length - 1 && mode === "online" ? <CheckComponent ids={idList} /> : null}
 									<audio src={item.preview_url} className={`audio` + i} />
 									{item.cover ? <img src={item.cover} className="inline w-16 h-16 mr-2" /> : null}
 									<p className="text-white justify-self-start">{item.name}</p>
@@ -299,7 +304,9 @@ export default function Cards({data, type}) {
 									<img
 										src={playButton}
 										className="h-5 w-auto invert mr-5"
-										onClick={() => handlePlay({autors: item.track.artists, i, musicName: item.track.name, img: item.track.album.images[0].url})}
+										onClick={() =>
+											handlePlay({autors: item.track.artists, i, musicName: item.track.name, img: item.track.album.images[0].url, music: item.track.preview_url})
+										}
 									/>
 								) : (
 									<p className="text-white text-sm text-center mr-5">{i + 1}</p>
@@ -322,44 +329,51 @@ export default function Cards({data, type}) {
 		case "playlistView":
 			return (
 				<>
-					<div className="grid sm:grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-4">
+					<div className="grid sm:grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full text-white py-1 border-b border-neutral-500 px-4 select-none">
 						<p>#</p>
 						<p>TITULO</p>
 						<p className="col-span-2 pr-8 hidden md:inline">ARTISTS</p>
 						<img src={timeIcon} className="w-8 h-8 invert mr-8 justify-self-end" />
 					</div>
-					{userPlaylist.map((item, i) => (
-						<div
-							key={"likedSong" + i}
-							className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full my-5 select-none px-2 sm:px-4"
-							onMouseEnter={() => setCurrentHover("item" + i)}
-							onMouseLeave={() => setCurrentHover("")}
-						>
-							<div className="flex items-center">
-								{currentHover === "item" + i ? (
+					{userPlaylist.map((item, i) => {
+						idList = [...idList, item.track.id];
+						return (
+							<div
+								key={"likedSong" + i}
+								className="grid grid-cols-[1.5rem,6fr,6fr] grid-flow-col w-full mt-5 select-none px-2 sm:px-4 items-center group"
+								onMouseEnter={() => setCurrentHover("item" + i)}
+								onMouseLeave={() => setCurrentHover("")}
+							>
+								<div className="flex items-center">
 									<img
 										src={playButton}
-										className="h-5 w-auto invert mr-5"
+										className="h-5 w-auto invert mr-5 hidden group-hover:inline"
 										onClick={() =>
 											handlePlay({autors: item.track.artists, i, musicName: item.track.name, music: item.track.preview_url, img: item.track.album.images[0].url})
 										}
 									/>
-								) : (
-									<p className="text-white text-sm text-center mr-5">{i + 1}</p>
-								)}
+
+									<p className="text-white text-sm text-center mr-5 inline group-hover:hidden">{i + 1}</p>
+								</div>
+								<div className="flex flex-row items-center truncate">
+									{i >= userPlaylist.length - 1 ? <CheckComponent ids={idList} /> : null}
+									<audio src={item.track.preview_url} className={`audio` + i} />
+									<img src={item.track.album.images[1].url} className="inline w-16 h-16 mr-2" />
+									<p className="text-white text-center truncate">{item.track.name}</p>
+								</div>
+								<p
+									className="text-white text-start w-full truncate sm:text-ellipsis hidden md:inline"
+									title={item.track.artists.map((artist, i) => (i >= 1 ? " " + artist.name : artist.name))}
+								>
+									{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}
+								</p>
+								<div className="px-8 flex flex-row justify-self-end">
+									<img src={heart} alt="heart" className={"w-5 h-5 sm:w-8 sm:h-8 cursor-pointer mr-10 heart" + i} onClick={() => addRemoveFav({id: item.track.id, i})} />
+									<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.track.duration_ms)}</p>
+								</div>
 							</div>
-							<div className="flex flex-row items-center truncate">
-								<audio src={item.track.preview_url} className={`audio` + i} />
-								<img src={item.track.album.images[1].url} className="inline w-16 h-16 mr-2" />
-								<p className="text-white text-center truncate">{item.track.name}</p>
-							</div>
-							<p className="text-white text-start sm:w-32 hidden md:inline">{item.track.artists.map((artist, i) => (i >= 1 ? ", " + artist.name : artist.name))}</p>
-							<div className="px-8 flex flex-row justify-self-end">
-								<img src={heart} alt="heart" className={"w-5 h-5 sm:w-8 sm:h-8 cursor-pointer mr-10 heart" + i} onClick={() => addRemoveFav({id: item.track.id, i})} />
-								<p className="text-white w-full text-center">{millisToMinutesAndSeconds(item.track.duration_ms)}</p>
-							</div>
-						</div>
-					))}
+						);
+					})}
 				</>
 			);
 		case "tracks":
@@ -379,7 +393,7 @@ export default function Cards({data, type}) {
 									<img
 										src={playButton}
 										className="h-5 w-auto invert hidden group-hover:inline"
-										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, img: item.album.images[0].url})}
+										onClick={() => handlePlay({autors: item.artists, i, musicName: item.name, img: item.album.images[0].url, music: item.preview_url})}
 									/>
 									<p className="text-white text-sm text-center group-hover:hidden">{i + 1}</p>
 								</div>
@@ -426,28 +440,30 @@ export default function Cards({data, type}) {
 		case "playlist":
 			return (
 				<div className="sm:ml-52 mb-32 flex flex-row flex-wrap justify-evenly">
-					{playlistData.map((item, i) => (
-						<div
-							className="bg-[#181818] pb-3 hover:bg-zinc-800 ml-4 flex flex-col items-center justify-center text-white mt-5 duration-300 group"
-							onClick={() => handleSearchPlaylist({id: item.id, name: item.name, img: item.images[0], owner: item.owner})}
-						>
-							{item?.images[0]?.url ? (
-								<img src={item.images[0].url} alt={"artistsPicture" + i} className="rounded w-36 h-36 shadow-lg shadow-black my-3" />
-							) : (
-								<img src={defaultArtist} alt={"artistsPicture" + i} className="rounded bg-[#282828] w-36 h-36 shadow-lg shadow-black my-3" />
-							)}
-							<div className="absolute">
-								<img
-									src={playBtnGreen}
-									className="rounded-full w-14 h-14 shadow-lg shadow-black my-3 relative top-16 left-16 cursor-pointer opacity-0 group-hover:opacity-100 group-hover:top-12 duration-300"
-								/>
+					{playlistData.map((item, i) => {
+						return (
+							<div
+								className="bg-[#181818] pb-3 hover:bg-zinc-800 ml-4 flex flex-col items-center justify-center text-white mt-5 duration-300 group"
+								onClick={() => handleSearchPlaylist({id: item.id, name: item.name, img: item.images[0], owner: item.owner})}
+							>
+								{item?.images[0]?.url ? (
+									<img src={item.images[0].url} alt={"artistsPicture" + i} className="rounded w-36 h-36 shadow-lg shadow-black my-3" />
+								) : (
+									<img src={defaultArtist} alt={"artistsPicture" + i} className="rounded bg-[#282828] w-36 h-36 shadow-lg shadow-black my-3" />
+								)}
+								<div className="absolute">
+									<img
+										src={playBtnGreen}
+										className="rounded-full w-14 h-14 shadow-lg shadow-black my-3 relative top-16 left-16 cursor-pointer opacity-0 group-hover:opacity-100 group-hover:top-12 duration-300"
+									/>
+								</div>
+								<div className="mx-3 w-36 sm:w-48">
+									<p className="truncate">{item.name}</p>
+									<p className="font-bold">Artista</p>
+								</div>
 							</div>
-							<div className="mx-3 w-36 sm:w-48">
-								<p className="truncate">{item.name}</p>
-								<p className="font-bold">Artista</p>
-							</div>
-						</div>
-					))}
+						);
+					})}
 				</div>
 			);
 	}

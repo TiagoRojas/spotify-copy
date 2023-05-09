@@ -11,7 +11,21 @@ import spotifyBanner from "../assets/banner.png";
 import githubLogo from "../assets/github-logo.png";
 import linkedinLogo from "../assets/linkedin.png";
 import portfolioLogo from "../assets/portfolio.png";
+import {useEffect, useState} from "react";
 function OfflineModeView() {
+	const [welcomeMessage, setWelcomeMessage] = useState("");
+	const hours = new Date().getHours();
+	useEffect(() => {
+		if (hours >= 7) {
+			setWelcomeMessage("Buenos dias!");
+		}
+		if (hours >= 12) {
+			setWelcomeMessage("Buenas tardes!");
+		}
+		if (hours >= 19 || hours < 7) {
+			setWelcomeMessage("Buenas noches!");
+		}
+	}, []);
 	const data = [
 		{
 			artists: [{name: "Ke Personajes"}, {name: "FMK"}, {name: "Big One"}],
@@ -36,55 +50,57 @@ function OfflineModeView() {
 		}
 	];
 	return (
-		<div className="bg-zinc-900 min-w-screen min-h-screen text-white">
+		<div className="min-w-screen min-h-screen text-white">
 			<SideMenu />
-			<div className="sm:pt-4 pt-20 w-full">
-				<img src={spotifyBanner} className="lg:w-[700px] xl:w-[1000px] w-[400px] sm:pl-52 mx-auto" />
-				<p className="text-white text-[20px] sm:ml-52 pl-5 pb-10">
-					Hola! Este es un proyecto realizado para mi portfolio personal, el cual utiliza:
-					<ul className="pl-5 text-white list-disc">
-						<li>React</li>
-						<li>Redux Toolkit</li>
-						<li>React Query</li>
-						<li>Sweetalert2</li>
-						<li>Spotify API</li>
-						<li>Tailwind CSS</li>
-					</ul>
+			<div className="sm:ml-52">
+				<div className="w-full lg:h-[350px] md:h-[300px] h-[150px] sm:pt-10">
+					<img src={spotifyBanner} className="w-full h-full object-contain" />
+				</div>
+				<p className="text-white text-[48px] font-bold mx-5 px-4 pt-4 bg-[#171717] rounded-t-xl mt-4">{welcomeMessage}</p>
+				<p className="text-white text-[20px] mx-5 px-4 pb-4 bg-[#171717] rounded-b-xl">
+					Este es un proyecto realizado para mi portfolio personal, el cual utiliza:
 				</p>
-				<div className="text-white flex flex-col lg:flex-row sm:items-center sm:ml-52 mx-5 pl-5">
+				<div className="pl-5 text-white list-disc flex flex-wrap my-4 bg-[#171717]">
+					<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">React</p>
+					<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Redux Toolkit</p>
+					<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">React Query</p>
+					<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Sweetalert2</p>
+					<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Tailwind CSS</p>
+					<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Spotify API</p>
+				</div>
+				<div className="text-white flex flex-col lg:flex-row sm:items-center px-5 w-full">
 					<a
-						href=""
+						href="https://github.com/TiagoRojas/spotify-copy"
 						target="_blank"
-						className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 lg:mt-0"
+						className="flex flex-row bg-[#2a2a2a] text-black font-bold w-full h-full overflow-hidden items-center rounded-lg mt-5 sm:mr-3 md:mt-0"
 					>
 						<img src={githubLogo} className="bg-white w-32 h-auto p-2" />
-						<p className="text-white text-[24px] ml-1">Link al repositorio</p>
+						<p className="text-white text-xl sm:text-[24px] ml-1">Link al repositorio</p>
 					</a>
+					{/* <a
+							href=""
+							target="_blank"
+							className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
+						>
+							<img src={portfolioLogo} className="bg-white w-32 h-auto p-2" />
+							<p className="text-white text-[24px] ml-1">Link a mi Portfolio</p>
+						</a> */}
 					<a
-						href=""
+						href="https://www.linkedin.com/in/rojastiago/"
 						target="_blank"
-						className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 lg:mt-0"
-					>
-						<img src={portfolioLogo} className="bg-white w-32 h-auto p-2" />
-						<p className="text-white text-[24px] ml-1">Link a mi Portfolio</p>
-					</a>
-					<a
-						href=""
-						target="_blank"
-						className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 lg:mt-0"
+						className="flex flex-row bg-[#2a2a2a] text-black font-bold w-full h-full overflow-hidden items-center rounded-lg mt-5 sm:mr-3 md:mt-0"
 					>
 						<img src={linkedinLogo} className="bg-white w-32 h-auto p-2" />
-						<p className="text-white text-[24px] ml-1">Link a LinkedIn</p>
+						<p className="text-white text-xl sm:text-[24px] ml-1">Link a LinkedIn</p>
 					</a>
 				</div>
-				<p className="sm:ml-52 text-xl px-4 sm:px-12 pt-5">
+				<p className="text-xl p-4 sm:mx-12 mx-4 mt-4 rounded-xl bg-[#171717]">
 					Estas en el modo Offline.. pero que eso no te desanime!
-					<br />
-					<br /> A diferencia del modo online, en donde unicamente puedes escuchar un fragmento de la cancion que quieras, aqui puedes escuchar la cancion completa
-					de las siguientes musicas:
+					<br />A diferencia del modo online, en donde unicamente puedes escuchar un fragmento de la cancion que quieras, aqui puedes escuchar la cancion completa de
+					las siguientes musicas:
 				</p>
-				<Cards data={data} type="dataProps" />
 			</div>
+			<Cards data={data} type="dataProps" />
 			<Player />
 		</div>
 	);

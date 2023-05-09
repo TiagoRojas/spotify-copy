@@ -6,6 +6,16 @@ export const spotifyApi = createApi({
 		baseUrl: "https://api.spotify.com/v1"
 	}),
 	endpoints: (builder) => ({
+		fetchUserPlaylist: builder.query({
+			query: ({token}) => ({
+				url: `https://api.spotify.com/v1/me/playlists`,
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			})
+		}),
 		getTrack: builder.query({
 			query: ({value = "", token, offset = 0}) => ({
 				url: `/search?q=${value}&type=track%2Calbum%2Cplaylist%2Cartist&limit=21&offset=${offset}`,
@@ -85,10 +95,41 @@ export const spotifyApi = createApi({
 					Authorization: `Bearer ${token}`
 				}
 			})
+		}),
+		checkUserFollowPlaylist: builder.query({
+			query: ({token, id, userId}) => ({
+				url: `/playlists/${id}/followers/contains?ids=${userId}`,
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			})
+		}),
+		addPlaylistFavorite: builder.query({
+			query: ({token, id}) => ({
+				url: `/playlists/${id}/followers`,
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			})
+		}),
+		removePlaylistFavorite: builder.query({
+			query: ({token, id}) => ({
+				url: `/playlists/${id}/followers`,
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			})
 		})
 	})
 });
 export const {
+	useLazyFetchUserPlaylistQuery,
 	useLazyGetTrackQuery,
 	useLazyGetAlbumQuery,
 	useLazyGetPlaylistQuery,
@@ -96,5 +137,8 @@ export const {
 	useLazyAddTrackFavoriteQuery,
 	useLazyRemoveTrackFavoriteQuery,
 	useLazyGetFavoriteTracksQuery,
-	useLazyGetNewReleasesQuery
+	useLazyGetNewReleasesQuery,
+	useLazyCheckUserFollowPlaylistQuery,
+	useLazyAddPlaylistFavoriteQuery,
+	useLazyRemovePlaylistFavoriteQuery
 } = spotifyApi;

@@ -23,19 +23,17 @@ function SideMenu() {
 		window.open("https://www.spotify.com/download");
 	};
 
-	const handleMoveHome = () => {
+	const handleReset = () => {
 		pause();
-		setTimeout(() => {
-			reset();
-		}, 250);
+		reset();
 	};
 	const handleMoveToLikedSongs = () => {
 		dispatch(updateTrackFavList({type: "reset"}));
 		getFavoriteTracks({token: accessToken, offset: 0});
 		reset();
 	};
-	const handlePlaylistRequest = ({id, image, name, playlist}) => {
-		dispatch(changeCheckedIdPlaylist(id));
+	const handlePlaylistRequest = ({id, image, name}) => {
+		dispatch(changeData({type: "reset"}));
 		fetch(`https://api.spotify.com/v1/playlists/${id}`, {
 			method: "GET",
 			headers: {
@@ -46,7 +44,7 @@ function SideMenu() {
 			.then((res) => res.json())
 			.then((data) => {
 				reset();
-				dispatch(changeData({data: data, type: "playlist", loaded: true, name, image}));
+				dispatch(changeData({data: data, type: "playlist", loaded: true, name, image, id}));
 			});
 	};
 	const showMenu = () => {
@@ -66,7 +64,7 @@ function SideMenu() {
 					<div className="border-b pb-2">
 						{currentMode === "online" ? (
 							<>
-								<NavLink to={"/"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-150" : "")} onClick={() => handleMoveHome()}>
+								<NavLink to={"/"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-150" : "")} onClick={() => handleReset()}>
 									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
 										<img src={homeIcon} className="w-5 h-5 mr-1 invert" />
 										Inicio

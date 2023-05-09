@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {changeVolume, timestamp, changeLoop} from "../../store/slice/spotifySlice";
 import PlayerBtn from "../../assets/playerBtn.png";
 import PauseBtn from "../../assets/pauseBtn.png";
+import SkipBtn from "../../assets/skipBtn.png";
 import volumeNormal from "../../assets/volumeNormal.png";
 import volumeHalf from "../../assets/volumeHalf.png";
 import volumeLow from "../../assets/volumeLow.png";
@@ -12,7 +13,7 @@ import loopIconActive from "../../assets/loopIconActive.png";
 import useMusic from "../../hooks/useMusic";
 import {useEffect} from "react";
 import {useState} from "react";
-import {formatSecondsAsTime, millisToMinutesAndSeconds} from "../complements";
+import {formatSecondsAsTime} from "../complements";
 
 export default function Player() {
 	let currentVolume = useSelector((state) => state.spotifyData.volume);
@@ -83,20 +84,24 @@ export default function Player() {
 			}
 		}
 	};
-
+	const handleLoop = () => {
+		dispatch(changeLoop(!isLooping));
+	};
 	// This useEffect executes every time the user is playing something and clicks the loop button, updates the song for looping until disables it
 	useEffect(() => {
+		let loopElement = document.querySelector(".loopIcon");
+		let loopElementMobile = document.querySelector(".loopIconMobile");
+		if (isLooping) {
+			loopElement.src = loopIconActive;
+			loopElementMobile.src = loopIconActive;
+		} else {
+			loopElement.src = loopIcon;
+			loopElementMobile.src = loopIcon;
+		}
 		if (isPlaying) {
 			let audio = document.querySelector("." + audioPlaying);
 			if (audio === null) return;
-			let loopElement = document.querySelector(".loopIcon");
-			if (isLooping === true) {
-				audio.loop = true;
-				loopElement.src = loopIconActive;
-			} else {
-				audio.loop = false;
-				loopElement.src = loopIcon;
-			}
+			audio.loop = isLooping;
 		}
 	}, [isLooping]);
 
@@ -113,8 +118,6 @@ export default function Player() {
 		document.querySelector("#seeker").value = 0;
 		if (audioPlaying !== "") {
 			let audio = document.querySelector("." + audioPlaying);
-			console.dir(audio);
-			console.log(audio.duration);
 			if (audio === null) return;
 			audio.addEventListener("timeupdate", () => setAudioTime(audio.currentTime));
 		}
@@ -141,35 +144,39 @@ export default function Player() {
 			</div>
 			<div className="flex justify-evenly md:justify-center items-center flex-col col-span-3 lg:col-span-1 px-5 sm:px-0 select-none">
 				<div className="w-full flex flex-row items-center">
-					<p className="m-2 text-white text-[0.9rem]">{audioPlaying !== "" ? formatSecondsAsTime(audioTime) : "0:00"}</p>
+					<p className="m-2 text-white text-[0.9rem] timestamp">{audioPlaying !== "" ? formatSecondsAsTime(audioTime) : "0:00"}</p>
 					<input
 						type="range"
-						max={audioPlaying !== "" ? document.querySelector("." + audioPlaying).duration : 30}
+						max={audioPlaying !== "" ? document.querySelector("." + audioPlaying)?.duration : 30}
 						min={0}
 						step={0.01}
 						onInput={(e) => setAudioTime(e.target.value)}
 						id="seeker"
 						className="w-full py-5"
 					/>
-					<p className="m-2 text-white text-[0.9rem]">{audioPlaying === "" ? "0:00" : formatSecondsAsTime(document.querySelector("." + audioPlaying).duration)}</p>
+					<p className="m-2 text-white text-[0.9rem]">{audioPlaying === "" ? "0:00" : formatSecondsAsTime(document.querySelector("." + audioPlaying)?.duration)}</p>
 				</div>
 				<div className="items-center grid grid-flow-col lg:flex w-full grid-cols-3">
 					<img
 						src={loopIcon}
-						className="w-8 h-8 mr-4 loopIcon inline lg:hidden justify-self-center"
+						className="w-8 h-8 mr-4 loopIconMobile inline lg:hidden justify-self-center"
 						onClick={() => dispatch(changeLoop(!isLooping))}
 						title="Activar repetición"
 					/>
-					<img
-						src={isPlaying ? PauseBtn : PlayerBtn}
-						onClick={() => playerMusic()}
-						className="h-16 w-auto relative mx-auto"
-						title={isPlaying ? "Pausar" : "Reproducir"}
-					/>
+					<div className="flex items-center mx-auto">
+						<img src={SkipBtn} className="h-12 w-auto mx-1 rotate-[180deg] invert" />
+						<img
+							src={isPlaying ? PauseBtn : PlayerBtn}
+							onClick={() => playerMusic()}
+							className="h-16 w-auto cursor-pointer"
+							title={isPlaying ? "Pausar" : "Reproducir"}
+						/>
+						<img src={SkipBtn} className="h-12 w-auto mx-1 invert" />
+					</div>
 				</div>
 			</div>
 			<div className="lg:flex flex-row items-center justify-center sm:justify-self-end mr-10 pb-5 hidden select-none">
-				<img src={loopIcon} className="w-6 h-6 mr-4 loopIcon" onClick={() => dispatch(changeLoop(!isLooping))} title="Activar repetición" />
+				<img src={loopIcon} className="w-6 h-6 mr-4 loopIcon" onClick={() => handleLoop()} title="Activar repetición" />
 				<img
 					src={volumeHalf}
 					className="w-6 h-6 invert mr-4 volumeIcon"

@@ -12,7 +12,7 @@ const initialState = {
 				img: "",
 				name: "",
 				owner: "",
-				followers: 0
+				id: ""
 			}
 		},
 		newReleases: []
@@ -59,10 +59,11 @@ export const spotifySlice = createSlice({
 			}
 			if (action.payload.type === "playlist") {
 				state.data.userPlaylist.playlistInfo.owner = action.payload.data.owner.display_name;
-				state.data.userPlaylist.playlistInfo.followers = action.payload.data.followers.total;
-				state.data.userPlaylist.tracks = action.payload.data.tracks.items;
 				state.data.userPlaylist.playlistInfo.name = action.payload.name;
 				state.data.userPlaylist.playlistInfo.img = action.payload.image;
+				state.data.userPlaylist.playlistInfo.id = action.payload.id;
+				state.data.userPlaylist.playlistInfo.followers = action.payload.data.followers.total;
+				state.data.userPlaylist.tracks = action.payload.data.tracks.items;
 			}
 			if (action.payload.type === "newReleases") {
 				state.data.newReleases = action.payload.data;

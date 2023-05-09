@@ -40,43 +40,43 @@ function OnlineMode() {
 			<Player />
 			<div className="sm:pl-52 w-full">
 				<div className="sm:ml:52 sm:pt-5">
-					<div className="lg:w-[800px] xl:w-[1000px] w-screen h-[150px] md:h-[200px] mx-auto">
-						<img src={spotifyBanner} className="w-full h-full object-cover" />
+					<div className="w-full lg:h-[350px] md:h-[300px] h-[150px] sm:pt-10">
+						<img src={spotifyBanner} className="w-full h-full object-contain" />
 					</div>
 					<p className="text-white text-[48px] font-bold pl-5">{welcomeMessage}</p>
 					<p className="text-white text-[20px] pl-5">Este es un proyecto realizado para mi portfolio personal, el cual utiliza:</p>
-					<ul className="pl-5 text-white list-disc">
-						<li>React</li>
-						<li>Redux Toolkit</li>
-						<li>React Query</li>
-						<li>Sweetalert2</li>
-						<li>Spotify API</li>
-						<li>Tailwind CSS</li>
-					</ul>
-					<div className="text-white flex flex-col lg:flex-row sm:items-center sm:ml-5 mx-5 mb-32 pt-12 pl-12">
+					<div className="pl-5 text-white list-disc flex flex-wrap my-4">
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">React</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Redux Toolkit</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">React Query</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Sweetalert2</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Tailwind CSS</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Spotify API</p>
+					</div>
+					<div className="text-white flex flex-col lg:flex-row sm:items-center px-5 mb-32 w-full">
 						<a
-							href=""
+							href="https://github.com/TiagoRojas/spotify-copy"
 							target="_blank"
-							className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
+							className="flex flex-row bg-[#2a2a2a] text-black font-bold w-full h-full overflow-hidden items-center rounded-lg mt-5 sm:mr-3 md:mt-0"
 						>
 							<img src={githubLogo} className="bg-white w-32 h-auto p-2" />
-							<p className="text-white text-[24px] ml-1">Link al repositorio</p>
+							<p className="text-white text-xl sm:text-[24px] ml-1">Link al repositorio</p>
 						</a>
-						<a
+						{/* <a
 							href=""
 							target="_blank"
 							className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
 						>
 							<img src={portfolioLogo} className="bg-white w-32 h-auto p-2" />
 							<p className="text-white text-[24px] ml-1">Link a mi Portfolio</p>
-						</a>
+						</a> */}
 						<a
-							href=""
+							href="https://www.linkedin.com/in/rojastiago/"
 							target="_blank"
-							className="flex flex-row bg-[#2a2a2a] text-black font-bold h-32 w-full md:w-96 overflow-hidden items-center rounded-xl mt-5 mr-3 md:mt-0"
+							className="flex flex-row bg-[#2a2a2a] text-black font-bold w-full h-full overflow-hidden items-center rounded-lg mt-5 sm:mr-3 md:mt-0"
 						>
 							<img src={linkedinLogo} className="bg-white w-32 h-auto p-2" />
-							<p className="text-white text-[24px] ml-1">Link a LinkedIn</p>
+							<p className="text-white text-xl sm:text-[24px] ml-1">Link a LinkedIn</p>
 						</a>
 					</div>
 				</div>

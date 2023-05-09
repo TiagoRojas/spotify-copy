@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {changeData, isBlank, isPlaying, timestamp, updateSearch} from "../store/slice/spotifySlice";
+import {changeData, changeOffset, isBlank, isPlaying, timestamp, updateSearch} from "../store/slice/spotifySlice";
 import {useLazyGetTrackQuery} from "../store/api/spotifyApi";
 import {createSearchParams, useNavigate} from "react-router-dom";
 import {handleScroll} from "./complements";
@@ -27,12 +27,14 @@ export default function Search() {
 					}).toString()
 				});
 				dispatch(isPlaying(false));
+				dispatch(changeOffset(0));
 				dispatch(updateSearch(e.target.value));
 				getTrack({value: e.target.value, token: token, offset});
 				dispatch(isBlank(false));
 			}
 			if (e.target.value === "") {
 				dispatch(isBlank(true));
+				navigate("/search");
 				dispatch(updateSearch(e.target.value));
 				dispatch(timestamp({timestamp: 0, audio: ""}));
 				dispatch(isPlaying(false));

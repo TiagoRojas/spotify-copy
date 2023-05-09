@@ -7,8 +7,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {changeMode} from "../store/slice/spotifySlice";
 import {changeCode, updatePlaylist, updateUserData} from "../store/slice/dataSlice";
 import {useNavigate} from "react-router-dom";
-
+import {useLazyFetchUserPlaylistQuery} from "../store/api/spotifyApi";
 function App() {
+	const [fetchUserPlaylist, results] = useLazyFetchUserPlaylistQuery();
 	const currentMode = useSelector((state) => state.spotifyData.mode);
 	const dispatch = useDispatch();
 	const accessToken = useSelector((state) => state.data.code);
@@ -51,18 +52,15 @@ function App() {
 							dispatch(updateUserData(userData));
 							document.title = userData.display_name + " - Spotify";
 						});
-					fetch(`https://api.spotify.com/v1/me/playlists`, {
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${data.access_token}`
-						}
-					})
-						.then((responsePlaylist) => responsePlaylist.json())
-						.then((playlist) => dispatch(updatePlaylist(playlist.items)));
+					fetchUserPlaylist({token: data.access_token});
 				});
 		}
 	}, [code]);
+	useEffect(() => {
+		if (results.data) {
+			dispatch(updatePlaylist(results.data.items));
+		}
+	}, [results]);
 	switch (currentMode) {
 		case "":
 			return <Login />;

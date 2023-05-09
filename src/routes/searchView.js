@@ -11,6 +11,7 @@ import {changeOffset} from "../store/slice/spotifySlice";
 import NewReleases from "../Components/newReleases/NewReleases";
 import {handleScroll} from "../Components/complements";
 import {useNavigate} from "react-router-dom";
+import {DotWave} from "@uiball/loaders";
 
 function SearchView() {
 	const navigate = useNavigate();
@@ -68,7 +69,7 @@ function SearchView() {
 				</div>
 				<Player />
 			</div>
-			{tracks.length === 0 ? (
+			{searchValue === "" ? (
 				<NewReleases />
 			) : (
 				<div className="sm:pl-52 pt-5 sm:pt-36 lg:pt-28 text-white flex select-none overflow-x-scroll dataTypeElement pr-5 sm:px-0">

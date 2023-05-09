@@ -11,6 +11,7 @@ import leftArrow from "../assets/leftArrow.png";
 import {createRandomString} from "../Components/complements";
 import {useState} from "react";
 import {DotWave} from "@uiball/loaders";
+import useMusic from "../hooks/useMusic";
 
 function Album() {
 	const code = useSelector((state) => state.data.code);
@@ -19,6 +20,7 @@ function Album() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [loaded, setLoaded] = useState(false);
+	const {reset} = useMusic();
 	useEffect(() => {
 		if (results.data === undefined) {
 			getAlbum({id: albumId, token: code});
@@ -33,6 +35,10 @@ function Album() {
 			navigate("/");
 		}
 	}, [code]);
+	const handleReturn = () => {
+		reset();
+		navigate(-1);
+	};
 	return (
 		<div className="min-w-screen min-h-screen bg-zinc-900">
 			<SideMenu />
@@ -42,7 +48,7 @@ function Album() {
 						className="absolute w-screen min-h-screen flex flex-row bg-gradient-to-b sm:pl-52 md:h-[700px]"
 						style={{background: `linear-gradient(180deg, ${createRandomString(6)} 0%, rgba(0,0,0,0) 100%)`}}
 					>
-						<img src={leftArrow} alt="left arrow" className="ml-5 sm:ml-0 w-8 h-7 invert z-10 relative top-10 left-10" onClick={() => navigate(-1)} />
+						<img src={leftArrow} alt="left arrow" className="ml-5 sm:ml-0 w-8 h-7 invert z-10 relative top-10 left-10" onClick={() => handleReturn()} />
 						<div className="flex flex-row relative top-16">
 							<img src={results.data?.images[0].url} className="h-24 w-auto sm:h-72 sm:w-72 mr-5 mt-5 rounded" />
 							<div className="flex flex-col pt-10">

@@ -6,10 +6,11 @@ const useMusic = () => {
 	const userData = useSelector((state) => state.data.userData);
 	let currentAudio = useSelector((state) => state.spotifyData.currentPlaying.audio);
 	let currentMusicName = useSelector((state) => state.spotifyData.currentPlaying.item.musicName);
+	let looping = useSelector((state) => state.spotifyData.isLooping) || false;
 	let volume = useSelector((state) => state.spotifyData.volume);
 	const seeker = document.querySelector("#seeker");
+	const timestampElement = document.querySelector(".timestamp");
 	const start = ({i, item, music}) => {
-		console.log(music);
 		if (music === null || music === undefined) {
 			const Toast = Swal.mixin({
 				toast: true,
@@ -35,12 +36,18 @@ const useMusic = () => {
 		const audio = document.querySelector(`.audio${i}`);
 		audio.currentTime = 0;
 		audio.volume = volume;
+		audio.loop = looping;
 		dispatch(isPlaying(true));
 		audio.play();
 		audio.addEventListener("timeupdate", (e) => {
 			audio.onended = () => {
+				seeker.value = 0;
+				timestampElement.innerHTML = "0:00";
 				dispatch(isPlaying(false));
-				document.title = userData.display_name + " - Spotify";
+				if (userData.display_name !== undefined) {
+					document.title = userData.display_name + " - Spotify";
+				} else document.title = "Spotify";
+				reset();
 			};
 			seeker.oninput = () => {
 				audio.currentTime = seeker.value;
@@ -65,18 +72,23 @@ const useMusic = () => {
 		}
 	};
 	const resume = () => {
-		console.log(currentMusicName);
 		if (currentAudio !== undefined) {
 			let audio = document.querySelector("." + currentAudio);
 			audio.volume = volume;
+			audio.loop = looping;
 			document.title = currentMusicName + " - Spotify";
 			dispatch(timestamp({timestamp: audio.currentTime, audio: currentAudio}));
 			dispatch(isPlaying(true));
 			audio.play();
 			audio.addEventListener("timeupdate", (e) => {
 				audio.onended = () => {
+					seeker.value = 0;
+					timestampElement.innerHTML = "0:00";
 					dispatch(isPlaying(false));
-					document.title = userData.display_name + " - Spotify";
+					if (userData.display_name !== undefined) {
+						document.title = userData.display_name + " - Spotify";
+					} else document.title = "Spotify";
+					reset();
 				};
 				seeker.oninput = () => {
 					audio.currentTime = seeker.value;
