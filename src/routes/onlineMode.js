@@ -43,15 +43,15 @@ function OnlineMode() {
 					<div className="w-full lg:h-[350px] md:h-[300px] h-[150px] sm:pt-10">
 						<img src={spotifyBanner} className="w-full h-full object-contain" />
 					</div>
-					<p className="text-white text-[48px] font-bold pl-5">{welcomeMessage}</p>
-					<p className="text-white text-[20px] pl-5">Este es un proyecto realizado para mi portfolio personal, el cual utiliza:</p>
+					<p className="text-white text-[48px] mx-5 font-bold pl-5 rounded-t-xl mt-4">{welcomeMessage}</p>
+					<p className="text-white text-[20px] mx-5 pl-5 rounded-b-xl">Este es un proyecto realizado para mi portfolio personal, el cual utiliza:</p>
 					<div className="pl-5 text-white list-disc flex flex-wrap my-4">
-						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">React</p>
-						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Redux Toolkit</p>
-						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">React Query</p>
-						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Sweetalert2</p>
-						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Tailwind CSS</p>
-						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl bg-[#2a2a2a] mt-2">Spotify API</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">React</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">Redux Toolkit</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">React Query</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">Sweetalert2</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">Tailwind CSS</p>
+						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">Spotify API</p>
 					</div>
 					<div className="text-white flex flex-col lg:flex-row sm:items-center px-5 mb-32 w-full">
 						<a
