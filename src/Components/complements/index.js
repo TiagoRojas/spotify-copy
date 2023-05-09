@@ -12,6 +12,9 @@ export function formatSecondsAsTime(secs) {
 	}
 	return min + ":" + sec;
 }
+export function generateRandomGradient() {
+	return `linear-gradient(180deg, ${createRandomString(6)} 0%, rgba(0,0,0,0) 100%)`;
+}
 export function handleScroll({currentMode}) {
 	if (currentMode === "online") {
 		let scrollPosition = window.scrollY;

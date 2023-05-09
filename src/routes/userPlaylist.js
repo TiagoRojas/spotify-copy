@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import Cards from "../Components/Cards";
 import Player from "../Components/player";
 import SideMenu from "../Components/sideMenu";
-import {createRandomString} from "../Components/complements";
 import heartFilled from "../assets/heartFilled.png";
 import heart from "../assets/heart.png";
 import {
@@ -19,7 +18,6 @@ import {updatePlaylist} from "../store/slice/dataSlice";
 function UserPlaylist() {
 	const [fetchUserPlaylist, resultsPlaylist] = useLazyFetchUserPlaylistQuery();
 	const dispatch = useDispatch();
-	const playlist = useSelector((state) => state.data.userPlaylist);
 	const code = useSelector((state) => state.data.code);
 	const navigate = useNavigate();
 	const tracks = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
@@ -33,26 +31,34 @@ function UserPlaylist() {
 	const [checkUserFollowPlaylist, results] = useLazyCheckUserFollowPlaylistQuery();
 	const [addPlaylist, resultsAdded] = useLazyAddPlaylistFavoriteQuery();
 	const [removePlaylist, resultsRemoved] = useLazyRemovePlaylistFavoriteQuery();
+	const playlistColor = useSelector((state) => state.spotifyData.showingPlaylist.color);
+
+	useEffect(() => {
+		const element = document.querySelector(".playlistContainer");
+		if (element) {
+			element.style.background = playlistColor;
+		} else return;
+	});
 
 	useEffect(() => {
 		if (code === "") {
 			navigate("/");
 		} else return;
-	}, [code]);
+	}, [code, navigate]);
 
 	useEffect(() => {
 		if (playlistId !== "") {
 			checkUserFollowPlaylist({token: code, id: playlistId, userId: userData.id});
 		}
-	}, [playlistId]);
+	}, [playlistId, checkUserFollowPlaylist, code, userData.id]);
 
 	useEffect(() => {
 		fetchUserPlaylist({token: code});
-	}, [resultsAdded, resultsRemoved]);
+	}, [resultsAdded, resultsRemoved, code, fetchUserPlaylist]);
 
 	useEffect(() => {
 		if (resultsPlaylist.data) dispatch(updatePlaylist(resultsPlaylist.data.items));
-	}, [resultsPlaylist]);
+	}, [resultsPlaylist, dispatch]);
 
 	const handleAddOrRemovePlaylist = () => {
 		const heartElement = document.querySelector(".heartPlaylist");
@@ -73,12 +79,9 @@ function UserPlaylist() {
 				</div>
 			) : (
 				<>
-					<div
-						className="sm:pl-52 w-full text-white font-bold h-[500px] pl-12 z-[1] absolute top-1"
-						style={{background: `linear-gradient(180deg, ${createRandomString(6)} 0%, rgba(0,0,0,0) 100%)`}}
-					>
+					<div className="sm:pl-52 w-full text-white font-bold h-[500px] pl-12 z-[1] absolute top-1 playlistContainer">
 						<div className="flex items-center h-[250px] sm:pl-5">
-							{playlistImg !== undefined ? <img src={playlistImg.url} className="w-24 h-24 sm:w-48 sm:h-48 shadow-lg shadow-black" /> : null}
+							{playlistImg !== undefined ? <img src={playlistImg.url} className="w-24 h-24 sm:w-48 sm:h-48 shadow-lg shadow-black" alt="playlist" /> : null}
 							<div className="items-center pl-2">
 								<p className="sm:text-[18px]">PLAYLIST</p>
 								<p className="text-[24px] sm:text-[38px] align-middle">{playlistName}</p>

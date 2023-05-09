@@ -5,11 +5,12 @@ import homeIcon from "../../assets/home.png";
 import searchIcon from "../../assets/searchIcon.png";
 import hamburgerIcon from "../../assets/hamburgerIcon.png";
 import heart from "../../assets/myLikesHeart.png";
-import {NavLink, useNavigate} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {changeData, updateSearch, isBlank, changeCheckedIdPlaylist, updateTrackFavList, updateCheckedPlaylist} from "../../store/slice/spotifySlice";
+import {changeData, updateTrackFavList, changeColor} from "../../store/slice/spotifySlice";
 import {useLazyGetFavoriteTracksQuery} from "../../store/api/spotifyApi";
 import useMusic from "../../hooks/useMusic";
+import {generateRandomGradient} from "../complements";
 
 function SideMenu() {
 	const dispatch = useDispatch();
@@ -33,6 +34,8 @@ function SideMenu() {
 		reset();
 	};
 	const handlePlaylistRequest = ({id, image, name}) => {
+		const color = generateRandomGradient();
+		dispatch(changeColor(color));
 		dispatch(changeData({type: "reset"}));
 		fetch(`https://api.spotify.com/v1/playlists/${id}`, {
 			method: "GET",
@@ -56,7 +59,7 @@ function SideMenu() {
 	return (
 		<>
 			<div className="sm:hidden fixed bg-zinc-800 w-12 h-12 ml-4 mt-4 flex items-center justify-center inline-block rounded-2xl hamburger z-50 duration-300">
-				<img src={hamburgerIcon} className="h-auto w-10 z-10 invert" onClick={() => showMenu()} />
+				<img src={hamburgerIcon} className="h-auto w-10 z-10 invert" onClick={() => showMenu()} alt="menu" />
 			</div>
 			<div className="left-[-14rem] sm:left-[0px] fixed flex flex-col left-0 h-screen pb-10 sm:pb-0 w-56 sm:w-52 bg-black z-20 select-none text-white menu duration-300 overflow-y-scroll">
 				<img src={Logo} className="h-auto w-48 mx-auto mt-3" alt="Spotify Logo" />
@@ -66,13 +69,13 @@ function SideMenu() {
 							<>
 								<NavLink to={"/"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-150" : "")} onClick={() => handleReset()}>
 									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
-										<img src={homeIcon} className="w-5 h-5 mr-1 invert" />
+										<img src={homeIcon} className="w-5 h-5 mr-1 invert" alt="home" />
 										Inicio
 									</div>
 								</NavLink>
 								<NavLink to={"/search"} className={({isActive, isPending}) => (isPending ? "" : isActive ? "brightness-200" : "")}>
 									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl duration-200 brightness-50 hover:brightness-150">
-										<img src={searchIcon} className="w-5 h-5 mr-1 invert" />
+										<img src={searchIcon} className="w-5 h-5 mr-1 invert" alt="search" />
 										Buscar
 									</div>
 								</NavLink>
@@ -83,7 +86,7 @@ function SideMenu() {
 								>
 									<div className="flex flex-row items-center px-2 py-3 mt-2 rounded-xl">
 										<div className="flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-400 to-gray-100 w-6 h-6 rounded mr-1">
-											<img src={heart} className="w-3 h-3" />
+											<img src={heart} className="w-3 h-3" alt="heart" />
 										</div>
 										<p className="duration-200 brightness-50 hover:brightness-150">Tus me gusta</p>
 									</div>

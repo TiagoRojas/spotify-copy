@@ -23,7 +23,8 @@ const initialState = {
 	},
 	showingPlaylist: {
 		data: [],
-		id: ""
+		id: "",
+		color: ""
 	},
 	searchValue: "",
 	trackFavList: [],
@@ -84,6 +85,9 @@ export const spotifySlice = createSlice({
 			}
 			state.showingPlaylist.data = action.payload.data;
 		},
+		changeColor: (state, action) => {
+			state.showingPlaylist.color = action.payload;
+		},
 		changeShowingAlbum: (state, action) => {
 			if (action.payload.data === undefined) {
 				state.showingAlbum.id = action.payload.id;
@@ -113,7 +117,7 @@ export const spotifySlice = createSlice({
 			state.timestamp = action.payload.timestamp;
 		},
 		changeMusic: (state, action) => {
-			if (action.payload == undefined) {
+			if (action.payload === undefined) {
 				state.currentPlaying.audio = "";
 				state.currentPlaying.item = {};
 			} else {
@@ -151,6 +155,7 @@ export const {
 	changeMode,
 	changeData,
 	updateShowingPlaylist,
+	changeColor,
 	changeShowingAlbum,
 	updateSearch,
 	updateCheckedPlaylist,
