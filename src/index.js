@@ -13,13 +13,17 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Album from "./routes/album";
 import Playlist from "./routes/playlist";
 import OnlineMode from "./routes/onlineMode";
+import TrackView from "./routes/trackView";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <App />
 	},
-
+	{
+		path: "/track/:id",
+		element: <TrackView />
+	},
 	{
 		path: "/search",
 		element: <SearchView />

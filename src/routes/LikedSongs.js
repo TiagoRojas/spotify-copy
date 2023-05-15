@@ -21,8 +21,8 @@ function LikedSongs() {
 	const [loaded, setLoaded] = useState(false);
 	useEffect(() => {
 		if (!results.isFetching && results.isSuccess) {
-			dispatch(updateTrackFavList({data: results.data.items, type: "add"}));
 			setLoaded(true);
+			dispatch(updateTrackFavList({data: results.data.items, type: "add"}));
 		} else setLoaded(false);
 	}, [results]);
 	useEffect(() => {
@@ -44,7 +44,7 @@ function LikedSongs() {
 	return (
 		<div className="min-h-screen min-w-screen bg-zinc-900">
 			<SideMenu />
-			{tracks.length <= 1 ? (
+			{!loaded ? (
 				<div className="w-full h-screen flex justify-center items-center">
 					<DotWave size={47} speed={1} color="white" />
 				</div>
@@ -62,10 +62,15 @@ function LikedSongs() {
 							</div>
 						</div>
 					</div>
-
 					<div className="relative w-full h-full flex flex-col justify-center items-center mr-8 z-[1] sm:pt-8">
-						<div className="mt-40 sm:mt-64 bg-black/[0.3] w-full sm:pl-56 sm:px-4 px-2 pt-5">
-							<Cards token={token} type="likedSongs" />
+						<div className="mt-40 sm:mt-64 bg-black/[0.3] w-full sm:pl-56 sm:px-4 px-2 py-5">
+							{tracks.length < 1 ? (
+								<div className="text-white flex justify-center items-center">
+									<p>Todavia no has agregado una musica a favoritos!.</p>
+								</div>
+							) : (
+								<Cards token={token} type="likedSongs" />
+							)}
 						</div>
 					</div>
 				</>

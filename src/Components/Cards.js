@@ -7,7 +7,7 @@ import defaultArtist from "../assets/defaultArtist.png";
 import timeIcon from "../assets/timeIcon.png";
 import {useLazyAddTrackFavoriteQuery, useLazyCheckTrackExistQuery, useLazyRemoveTrackFavoriteQuery} from "../store/api/spotifyApi";
 import {useDispatch, useSelector} from "react-redux";
-import {changeOffset, changeShowingAlbum, updateShowingPlaylist} from "../store/slice/spotifySlice";
+import {changeData, changeOffset, changeShowingAlbum, updateShowingPlaylist} from "../store/slice/spotifySlice";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import useMusic from "../hooks/useMusic";
@@ -28,6 +28,7 @@ export default function Cards({data, type}) {
 	const artistData = useSelector((state) => state.spotifyData.data.artists);
 	const likedSongsData = useSelector((state) => state.spotifyData.trackFavList);
 	const newReleasesData = useSelector((state) => state.spotifyData.data.newReleases);
+	const recentData = useSelector((state) => state.spotifyData.data.userRecents);
 	const userPlaylist = useSelector((state) => state.spotifyData.data.userPlaylist.tracks);
 	const currentMode = useSelector((state) => state.spotifyData.mode);
 
@@ -75,6 +76,14 @@ export default function Cards({data, type}) {
 	const handleSearchPlaylist = ({id, name, img, owner}) => {
 		dispatch(updateShowingPlaylist(id));
 		navigate("/search/playlist/" + id);
+	};
+	const handleSearch = ({link, type, id}) => {
+		switch (type) {
+			case "track":
+				dispatch(changeData({type: "track", url: link}));
+				navigate("/track/" + id);
+			case "album":
+		}
 	};
 
 	// This is for detecting if one audio is playing at the moment so the others stops
@@ -352,7 +361,6 @@ export default function Cards({data, type}) {
 											handlePlay({autors: item.track.artists, i, musicName: item.track.name, music: item.track.preview_url, img: item.track.album.images[0].url})
 										}
 									/>
-
 									<p className="text-white text-sm text-center mr-5 inline group-hover:hidden">{i + 1}</p>
 								</div>
 								<div className="flex flex-row items-center truncate">
@@ -461,6 +469,24 @@ export default function Cards({data, type}) {
 									<p className="truncate">{item.name}</p>
 									<p className="font-bold">Artista</p>
 								</div>
+							</div>
+						);
+					})}
+				</div>
+			);
+		case "recent":
+			return (
+				<div className="grid grid-flow-col w-full pb-44 overflow-scroll">
+					{recentData.slice(0, 10).map((item, i) => {
+						console.log(item);
+						return (
+							<div
+								key={"recent" + i}
+								className="flex flex-col items-center w-32 h-32 ml-4"
+								onClick={() => handleSearch({type: item.track.type, id: item.track?.id, link: item.track.href})}
+							>
+								<img src={item.track.album.images[0].url} alt={item.track.type + " " + item.track.name} className="w-32 h-32" />
+								<p className="text-white">{item.track.name}</p>
 							</div>
 						);
 					})}

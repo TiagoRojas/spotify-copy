@@ -15,7 +15,8 @@ const initialState = {
 				id: ""
 			}
 		},
-		newReleases: []
+		newReleases: [],
+		userRecents: []
 	},
 	showingAlbum: {
 		data: [],
@@ -25,6 +26,12 @@ const initialState = {
 		data: [],
 		id: "",
 		color: ""
+	},
+	trackView: {
+		name: "",
+		url: "",
+		image: "",
+		data: []
 	},
 	searchValue: "",
 	trackFavList: [],
@@ -75,6 +82,18 @@ export const spotifySlice = createSlice({
 				state.data.playlists = [];
 				state.data.albums = [];
 				state.data.userPlaylist.tracks = [];
+			}
+			if (action.payload.type === "recent") {
+				state.data.userRecents = action.payload.data;
+			}
+			if (action.payload.type === "track") {
+				if (action.payload.url !== undefined) {
+					state.trackView.url = action.payload.url;
+				} else {
+					state.trackView.name = action.payload.name;
+					state.trackView.image = action.payload.image;
+					state.trackView.data = action.payload.data;
+				}
 			}
 			state.loaded = action.payload.loaded;
 		},

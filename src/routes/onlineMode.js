@@ -8,6 +8,7 @@ import {useSelector} from "react-redux";
 import {handleScroll} from "../Components/complements";
 import spotifyBanner from "../assets/banner.png";
 import {useEffect, useState} from "react";
+import Cards from "../Components/Cards";
 
 function OnlineMode() {
 	const currentMode = useSelector((state) => state.spotifyData.mode);
@@ -53,7 +54,10 @@ function OnlineMode() {
 						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">Tailwind CSS</p>
 						<p className="mr-3 p-6 text-md sm:text-xl rounded-xl hover:bg-[#363636] bg-[#2a2a2a] my-2">Spotify API</p>
 					</div>
-					<div className="text-white flex flex-col lg:flex-row sm:items-center px-5 mb-32 w-full">
+					<div>
+						<Cards type="recent" />
+					</div>
+					{/* <div className="text-white flex flex-col lg:flex-row sm:items-center px-5 mb-32 w-full">
 						<a
 							href="https://github.com/TiagoRojas/spotify-copy"
 							target="_blank"
@@ -69,7 +73,7 @@ function OnlineMode() {
 						>
 							<img src={portfolioLogo} className="bg-white w-32 h-auto p-2" />
 							<p className="text-white text-[24px] ml-1">Link a mi Portfolio</p>
-						</a> */}
+						</a>
 						<a
 							href="https://www.linkedin.com/in/rojastiago/"
 							target="_blank"
@@ -78,7 +82,7 @@ function OnlineMode() {
 							<img src={linkedinLogo} className="bg-white w-32 h-auto p-2" />
 							<p className="text-white text-xl sm:text-[24px] ml-1">Link a LinkedIn</p>
 						</a>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

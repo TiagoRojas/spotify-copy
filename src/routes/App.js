@@ -4,7 +4,7 @@ import Login from "../Components/Login";
 import OfflineModeView from "./offlineMode";
 import OnlineMode from "./onlineMode";
 import {useDispatch, useSelector} from "react-redux";
-import {changeMode} from "../store/slice/spotifySlice";
+import {changeData, changeMode} from "../store/slice/spotifySlice";
 import {changeCode, updatePlaylist, updateUserData} from "../store/slice/dataSlice";
 import {useNavigate} from "react-router-dom";
 import {useLazyFetchUserPlaylistQuery} from "../store/api/spotifyApi";
@@ -40,6 +40,18 @@ function App() {
 					dispatch(changeMode("online"));
 					dispatch(changeCode(data.access_token));
 					navigate("/");
+					fetch("https://api.spotify.com/v1/me/player/recently-played", {
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${data.access_token}`
+						}
+					})
+						.then((response) => response.json())
+						.then((recentData) => {
+							console.log(recentData);
+							dispatch(changeData({type: "recent", data: recentData.items}));
+						});
 					fetch("https://api.spotify.com/v1/me", {
 						method: "GET",
 						headers: {
@@ -49,7 +61,6 @@ function App() {
 					})
 						.then((response) => response.json())
 						.then((userData) => {
-							console.log(userData);
 							dispatch(updateUserData(userData));
 							document.title = userData.display_name + " - Spotify";
 						});
